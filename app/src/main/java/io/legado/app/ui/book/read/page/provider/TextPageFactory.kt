@@ -1,9 +1,11 @@
 package io.legado.app.ui.book.read.page.provider
 
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.model.ReadBook
 import io.legado.app.help.book.update
 import io.legado.app.ui.book.read.page.api.DataSource
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.ui.book.read.page.api.PageFactory
 import io.legado.app.ui.book.read.page.entities.TextPage
 import splitties.init.appCtx
@@ -56,17 +58,21 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 val isLastChapter = currentChapter?.chapter?.index == (currentChapter?.chaptersSize?.minus(1) ?: 0)
                 if (isLastChapter && ReadBook.showBookplate == 0) {
                     val book = ReadBook.book
-                    if (book != null && book.readIteration % 2 == 0 && ReadBook.inBookshelf) {
+                    if (book != null && book.readIteration % 2 == 0 && ReadBook.inBookshelf
+                        && appCtx.getPrefBoolean(PreferKey.readIterationPopup, true)) {
                         ReadBook.callBack?.onBookEnd()
                         return@with false
                     }
-                    ReadBook.showBookplate = 1
                     book?.let {
                         if (it.finishTime <= 0) {
                             it.finishTime = System.currentTimeMillis()
                             io.legado.app.data.appDb.bookDao.update(it)
                         }
                     }
+                    if (!appCtx.getPrefBoolean(PreferKey.showBookplate, true)) {
+                        return@with false
+                    }
+                    ReadBook.showBookplate = 1
                     if (upContent) upContent(resetPageOffset = false)
                     return@with true
                 }
@@ -79,17 +85,21 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                     val isLastChapter = currentChapter?.chapter?.index == (currentChapter?.chaptersSize?.minus(1) ?: 0)
                     if (isLastChapter && ReadBook.showBookplate == 0) {
                         val book = ReadBook.book
-                        if (book != null && book.readIteration % 2 == 0 && ReadBook.inBookshelf) {
+                        if (book != null && book.readIteration % 2 == 0 && ReadBook.inBookshelf
+                            && appCtx.getPrefBoolean(PreferKey.readIterationPopup, true)) {
                             ReadBook.callBack?.onBookEnd()
                             return@with false
                         }
-                        ReadBook.showBookplate = 1
                         book?.let {
                             if (it.finishTime <= 0) {
                                 it.finishTime = System.currentTimeMillis()
                                 io.legado.app.data.appDb.bookDao.update(it)
                             }
                         }
+                        if (!appCtx.getPrefBoolean(PreferKey.showBookplate, true)) {
+                            return@with false
+                        }
+                        ReadBook.showBookplate = 1
                         if (upContent) upContent(resetPageOffset = false)
                         return@with true
                     }
@@ -113,7 +123,8 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 return@with true
             }
             if (pageIndex <= 0) {
-                if (currentChapter?.chapter?.index == 0 && pageIndex == 0 && ReadBook.showBookplate == 0) {
+                if (currentChapter?.chapter?.index == 0 && pageIndex == 0 && ReadBook.showBookplate == 0
+                    && appCtx.getPrefBoolean(PreferKey.showBookplate, true)) {
                     ReadBook.showBookplate = -1
                     if (upContent) upContent(resetPageOffset = false)
                     return@with true

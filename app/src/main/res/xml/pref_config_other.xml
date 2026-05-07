@@ -170,6 +170,27 @@
             android:summary="@string/show_add_to_shelf_alert_summary"
             android:title="@string/show_add_to_shelf_alert_title" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="readIterationPopup"
+            android:summary="@string/read_iteration_popup_summary"
+            android:title="@string/read_iteration_popup"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="readIterationShowTag"
+            android:summary="@string/read_iteration_show_tag_summary"
+            android:title="@string/read_iteration_show_tag"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="showBookplate"
+            android:summary="@string/show_bookplate_summary"
+            android:title="@string/show_bookplate"
+            app:iconSpaceReserved="false" />
+
         <io.legado.app.lib.prefs.NameListPreference
             android:defaultValue="default_version"
             android:key="updateToVariant"

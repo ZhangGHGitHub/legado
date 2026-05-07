@@ -323,7 +323,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             viewModel.initData(intent) {
                 // 初始化完成后检测书籍是否为已读完状态，若是则询问是否进行下一刷
                 val book = ReadBook.book ?: return@initData
-                if (ReadIterationHelper.isFinished(book) && ReadBook.inBookshelf) {
+                if (ReadIterationHelper.isFinished(book) && ReadBook.inBookshelf
+                    && getPrefBoolean(PreferKey.readIterationPopup, true)) {
                     showNextIterationDialog(book)
                 }
             }
@@ -1129,6 +1130,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun onBookEnd() {
         val book = ReadBook.book ?: return
+        if (!getPrefBoolean(PreferKey.readIterationPopup, true)) return
         // 只处理奇数前的状态：0->1(读完), 2->3(二刷完), ... 即 readIteration 为偶数时
         if (book.readIteration % 2 != 0) return
         if (!ReadBook.inBookshelf) return

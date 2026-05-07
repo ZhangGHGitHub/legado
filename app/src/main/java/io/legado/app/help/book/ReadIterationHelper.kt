@@ -6,6 +6,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.visible
 import splitties.init.appCtx
@@ -103,6 +104,10 @@ object ReadIterationHelper {
      * 有标签时显示圆角背景 + 文本，无标签时隐藏。
      */
     fun applyTagStyle(tv: TextView, readIteration: Int) {
+        if (!appCtx.getPrefBoolean(PreferKey.readIterationShowTag, true)) {
+            tv.gone()
+            return
+        }
         val tagText = getTagText(readIteration)
         if (tagText != null) {
             tv.text = tagText

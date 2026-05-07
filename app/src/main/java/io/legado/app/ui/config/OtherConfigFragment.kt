@@ -237,6 +237,10 @@ class OtherConfigFragment : PreferenceFragment(),
                 val isEnabled = sharedPreferences?.getBoolean(key, false) ?: false
                 onlyUpdateReadPref?.isVisible = isEnabled
             }
+
+            PreferKey.readIterationPopup, PreferKey.readIterationShowTag -> {
+                postEvent(EventBus.UP_BOOKSHELF, "")
+            }
         }
     }
 

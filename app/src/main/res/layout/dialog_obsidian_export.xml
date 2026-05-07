@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
-        app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/export_to_obsidian"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/progress_bar"
-        app:layout_constraintTop_toBottomOf="@+id/tool_bar">
+        android:layout_height="wrap_content"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -160,16 +159,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/flex_button_layout" />
+        android:visibility="gone" />
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/flex_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        app:justifyContent="flex_end"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:justifyContent="flex_end">
 
         <io.legado.app.ui.widget.text.AccentTextView
             android:id="@+id/btn_export"
@@ -181,4 +178,4 @@
 
     </com.google.android.flexbox.FlexboxLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

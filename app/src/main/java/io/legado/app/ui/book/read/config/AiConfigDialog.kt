@@ -37,6 +37,7 @@ class AiConfigDialog : BaseDialogFragment(R.layout.dialog_ai_config) {
         binding.etPersona.setText(AiConfig.persona)
         binding.etUserAvatar.setText(AiConfig.userAvatar)
         binding.etAiAvatar.setText(AiConfig.aiAvatar)
+        binding.swtToolEnabled.isChecked = AiConfig.toolEnabled
         updateMemoryLength()
     }
 
@@ -48,6 +49,7 @@ class AiConfigDialog : BaseDialogFragment(R.layout.dialog_ai_config) {
             AiConfig.persona = binding.etPersona.text?.toString() ?: ""
             AiConfig.userAvatar = binding.etUserAvatar.text?.toString() ?: ""
             AiConfig.aiAvatar = binding.etAiAvatar.text?.toString() ?: ""
+            AiConfig.toolEnabled = binding.swtToolEnabled.isChecked
             toastOnUi("配置已保存")
             dismiss()
         }

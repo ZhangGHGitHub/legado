@@ -3,7 +3,9 @@ package io.legado.app.help.config
 import androidx.annotation.Keep
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefString
 import splitties.init.appCtx
 
@@ -27,6 +29,7 @@ object AiConfig {
     private const val KEY_AI_MEMORY = "ai_memory"
     private const val KEY_AI_AVATAR = "ai_avatar"
     private const val KEY_USER_AVATAR = "user_avatar"
+    private const val KEY_AI_TOOL_ENABLED = "ai_tool_enabled"
 
     var apiUrl: String
         get() = appCtx.getPrefString(KEY_AI_API_URL, "https://api.openai.com/v1/chat/completions") ?: ""
@@ -90,5 +93,11 @@ object AiConfig {
         get() = appCtx.getPrefString(KEY_USER_AVATAR, "") ?: ""
         set(value) {
             appCtx.putPrefString(KEY_USER_AVATAR, value)
+        }
+
+    var toolEnabled: Boolean
+        get() = appCtx.getPrefBoolean(KEY_AI_TOOL_ENABLED, true)
+        set(value) {
+            appCtx.putPrefBoolean(KEY_AI_TOOL_ENABLED, value)
         }
 }

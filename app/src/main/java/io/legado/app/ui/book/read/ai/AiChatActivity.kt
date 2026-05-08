@@ -98,7 +98,7 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
 
     private fun observeData() {
         viewModel.messagesLiveData.observe(this) { msgs ->
-            val displayMsgs = msgs.filter { it.role != "system" }
+            val displayMsgs = msgs.filter { it.role != "system" && it.role != "tool" }
             adapter.submitList(displayMsgs)
             if (displayMsgs.isNotEmpty()) {
                 binding.recyclerView.scrollToPosition(displayMsgs.size - 1)

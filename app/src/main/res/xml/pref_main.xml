@@ -118,6 +118,13 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:icon="@drawable/ic_ai_companion"
+            android:key="aiAssistant"
+            android:summary="@string/ai_assistant_desc"
+            android:title="@string/ai_assistant"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:icon="@drawable/ic_cfg_about"
             android:key="about"
             android:title="@string/about"

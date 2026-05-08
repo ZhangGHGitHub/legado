@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -26,27 +27,36 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
     private val viewModel by viewModels<AiChatViewModel>()
     private val adapter by lazy { ChatAdapter() }
 
+    /** 是否为独立模式（从"我的"页面进入，无书籍上下文） */
+    private val isStandalone: Boolean get() = ReadBook.book == null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         bindEvent()
         observeData()
         setupKeyboardAdjustment()
-        val currentChapter = (ReadBook.durChapterIndex + 1).toString()
-        binding.etChapterStart.setText(currentChapter)
-        binding.etChapterEnd.setText(currentChapter)
 
-        viewModel.initMessages((ReadBook.durChapterIndex + 1), (ReadBook.durChapterIndex + 1))
-        updateWordCount()
+        if (isStandalone) {
+            // 独立模式：隐藏章节选择区域，直接初始化
+            binding.layoutChapterRange.visibility = View.GONE
+            binding.titleBar.title = getString(R.string.ai_assistant)
+            viewModel.initMessages(0, 0)
+        } else {
+            val currentChapter = (ReadBook.durChapterIndex + 1).toString()
+            binding.etChapterStart.setText(currentChapter)
+            binding.etChapterEnd.setText(currentChapter)
+            viewModel.initMessages(
+                ReadBook.durChapterIndex + 1,
+                ReadBook.durChapterIndex + 1
+            )
+            updateWordCount()
+        }
     }
 
-    /**
-     * 监听键盘弹起/收起，手动调整底部 padding，兼容全面屏及 Android 10+ 的 edge-to-edge 场景。
-     */
     private fun setupKeyboardAdjustment() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-            // 键盘弹出时 imeHeight > navBarHeight，底部额外留出键盘高度
             val bottomPadding = if (imeHeight > navBarHeight) imeHeight else navBarHeight
             binding.root.setPadding(0, 0, 0, bottomPadding)
             insets
@@ -54,7 +64,6 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
     }
 
     private fun initView() {
-        binding.titleBar.title = getString(R.string.ai_companion)
         binding.recyclerView.layoutManager = LinearLayoutManager(this).apply {
             stackFromEnd = true
         }
@@ -79,8 +88,17 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
             }
             val text = binding.etInput.text.toString()
             if (text.isNotBlank()) {
-                val start = binding.etChapterStart.text.toString().toIntOrNull() ?: (ReadBook.durChapterIndex + 1)
-                val end = binding.etChapterEnd.text.toString().toIntOrNull() ?: (ReadBook.durChapterIndex + 1)
+                val start: Int
+                val end: Int
+                if (isStandalone) {
+                    start = 0
+                    end = 0
+                } else {
+                    start = binding.etChapterStart.text.toString().toIntOrNull()
+                        ?: (ReadBook.durChapterIndex + 1)
+                    end = binding.etChapterEnd.text.toString().toIntOrNull()
+                        ?: (ReadBook.durChapterIndex + 1)
+                }
                 viewModel.sendMessage(text, start, end)
                 binding.etInput.setText("")
             }
@@ -88,6 +106,7 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
     }
 
     private fun updateWordCount() {
+        if (isStandalone) return
         val start = binding.etChapterStart.text.toString().toIntOrNull()
         val end = binding.etChapterEnd.text.toString().toIntOrNull()
         val bookUrl = ReadBook.book?.bookUrl
@@ -107,12 +126,13 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
         }
 
         viewModel.wordCountLiveData.observe(this) { count ->
+            if (isStandalone) return@observe
             val countStr = if (count >= 10000) String.format("%.1f万", count / 10000f) else count.toString()
             binding.tvWordCount.text = "字数: $countStr"
             if (count > 50000) {
                 binding.tvWordCount.setTextColor(Color.RED)
             } else {
-                binding.tvWordCount.setTextColor(Color.parseColor("#888888")) // Secondary color approximation
+                binding.tvWordCount.setTextColor(Color.parseColor("#888888"))
             }
         }
 
@@ -150,8 +170,14 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
                 return true
             }
             R.id.menu_ai_summarize -> {
-                val start = binding.etChapterStart.text.toString().toIntOrNull() ?: (ReadBook.durChapterIndex + 1)
-                val end = binding.etChapterEnd.text.toString().toIntOrNull() ?: (ReadBook.durChapterIndex + 1)
+                if (isStandalone) {
+                    toastOnUi("独立模式下无法归纳记忆，请在阅读界面中使用")
+                    return true
+                }
+                val start = binding.etChapterStart.text.toString().toIntOrNull()
+                    ?: (ReadBook.durChapterIndex + 1)
+                val end = binding.etChapterEnd.text.toString().toIntOrNull()
+                    ?: (ReadBook.durChapterIndex + 1)
                 viewModel.summarizeAndMemory(start, end)
                 return true
             }

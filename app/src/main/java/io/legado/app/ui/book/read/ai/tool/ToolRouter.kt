@@ -193,8 +193,10 @@ object ToolRouter {
         return ToolExecuteResult.NeedConfirmation(
             description = "将《${book.name}》移入分组「${group.groupName}」"
         ) {
-            book.group = group.groupId
-            book.save()
+            withContext(Dispatchers.IO) {
+                book.group = group.groupId
+                book.save()
+            }
             """{"success":true,"message":"已将《${book.name}》移入分组「${group.groupName}」"}"""
         }
     }
@@ -211,7 +213,9 @@ object ToolRouter {
         return ToolExecuteResult.NeedConfirmation(
             description = "${action}书源「${source.bookSourceName}」"
         ) {
-            appDb.bookSourceDao.enable(source.bookSourceUrl, enabled)
+            withContext(Dispatchers.IO) {
+                appDb.bookSourceDao.enable(source.bookSourceUrl, enabled)
+            }
             """{"success":true,"message":"已${action}书源「${source.bookSourceName}」"}"""
         }
     }
@@ -228,8 +232,10 @@ object ToolRouter {
         return ToolExecuteResult.NeedConfirmation(
             description = "${action}订阅源「${source.sourceName}」"
         ) {
-            source.enabled = enabled
-            appDb.rssSourceDao.update(source)
+            withContext(Dispatchers.IO) {
+                source.enabled = enabled
+                appDb.rssSourceDao.update(source)
+            }
             """{"success":true,"message":"已${action}订阅源「${source.sourceName}」"}"""
         }
     }
@@ -244,7 +250,9 @@ object ToolRouter {
         return ToolExecuteResult.NeedConfirmation(
             description = "删除书源「${source.bookSourceName}」（此操作不可撤销）"
         ) {
-            SourceHelp.deleteBookSource(source.bookSourceUrl)
+            withContext(Dispatchers.IO) {
+                SourceHelp.deleteBookSource(source.bookSourceUrl)
+            }
             """{"success":true,"message":"已删除书源「${source.bookSourceName}」"}"""
         }
     }
@@ -262,8 +270,10 @@ object ToolRouter {
         return ToolExecuteResult.NeedConfirmation(
             description = "将书源「${source.bookSourceName}」移入分组「${groupName}」"
         ) {
-            fullSource.addGroup(groupName)
-            appDb.bookSourceDao.update(fullSource)
+            withContext(Dispatchers.IO) {
+                fullSource.addGroup(groupName)
+                appDb.bookSourceDao.update(fullSource)
+            }
             """{"success":true,"message":"已将书源「${source.bookSourceName}」移入分组「${groupName}」"}"""
         }
     }
@@ -278,7 +288,9 @@ object ToolRouter {
         return ToolExecuteResult.NeedConfirmation(
             description = "删除订阅源「${source.sourceName}」（此操作不可撤销）"
         ) {
-            SourceHelp.deleteRssSource(source.sourceUrl)
+            withContext(Dispatchers.IO) {
+                SourceHelp.deleteRssSource(source.sourceUrl)
+            }
             """{"success":true,"message":"已删除订阅源「${source.sourceName}」"}"""
         }
     }

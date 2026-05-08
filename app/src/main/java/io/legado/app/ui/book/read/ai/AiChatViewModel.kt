@@ -108,11 +108,6 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
 
     private suspend fun buildSystemPrompt(start: Int, end: Int): String {
         return withContext(Dispatchers.IO) {
-            val chapterSize = ReadBook.chapterSize
-            val clampedStart = start.coerceIn(1, chapterSize.coerceAtLeast(1))
-            val clampedEnd = end.coerceIn(1, chapterSize.coerceAtLeast(1))
-            val st = minOf(clampedStart, clampedEnd)
-            val ed = maxOf(clampedStart, clampedEnd)
             buildString {
                 append("【人设与要求】\n")
                 append(AiConfig.persona)
@@ -126,15 +121,23 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
                     append("\n\n【之前的对话记忆】\n")
                     append(AiConfig.memory)
                 }
-                append("\n\n【参考章节内容】\n")
-                val book = ReadBook.book
-                if (book != null) {
-                    val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl, st - 1, ed - 1)
-                    for (chapter in chapterList) {
-                        val content = BookHelp.getContent(book, chapter) ?: continue
-                        append("=== ${chapter.title} ===\n")
-                        append(content)
-                        append("\n\n")
+                // start/end 为 0 表示独立模式，不加载章节内容
+                if (start > 0 && end > 0) {
+                    val chapterSize = ReadBook.chapterSize
+                    val clampedStart = start.coerceIn(1, chapterSize.coerceAtLeast(1))
+                    val clampedEnd = end.coerceIn(1, chapterSize.coerceAtLeast(1))
+                    val st = minOf(clampedStart, clampedEnd)
+                    val ed = maxOf(clampedStart, clampedEnd)
+                    append("\n\n【参考章节内容】\n")
+                    val book = ReadBook.book
+                    if (book != null) {
+                        val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl, st - 1, ed - 1)
+                        for (chapter in chapterList) {
+                            val content = BookHelp.getContent(book, chapter) ?: continue
+                            append("=== ${chapter.title} ===\n")
+                            append(content)
+                            append("\n\n")
+                        }
                     }
                 }
             }

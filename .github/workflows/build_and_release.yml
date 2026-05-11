@@ -83,7 +83,7 @@ jobs:
           force_update: true
 
       - name: Create Gitee Release
-        uses: nICEnnnnnnnLee/action-gitee-release@v1.5.0
+        uses: nICEnnnnnnnLee/action-gitee-release@v2.0.0
         with:
           gitee_action: create_release
           gitee_owner: mirror-233
@@ -94,7 +94,7 @@ jobs:
           gitee_target_commitish: main
 
       - name: Upload APKs to Gitee Release
-        uses: nICEnnnnnnnLee/action-gitee-release@v1.5.0
+        uses: nICEnnnnnnnLee/action-gitee-release@v2.0.0
         with:
           gitee_action: upload_asset
           gitee_owner: mirror-233

@@ -88,60 +88,54 @@ jobs:
           REPO="mirror-233/legado"
           TOKEN="${{ secrets.GITEE_TOKEN }}"
 
-          # 先检查 tag 是否存在于 Gitee，不存在则基于 main 分支创建
-          echo "Checking if tag $TAG exists on Gitee..."
-          TAG_CHECK=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://gitee.com/api/v5/repos/$REPO/tags/$TAG?access_token=$TOKEN")
-          echo "Tag check HTTP status: $TAG_CHECK"
+          # 1. 检查 release 是否已存在（重跑场景）
+          echo "Checking if release for tag $TAG already exists..."
+          EXISTING=$(curl -s "https://gitee.com/api/v5/repos/$REPO/releases/tags/$TAG?access_token=$TOKEN")
+          RELEASE_ID=$(echo "$EXISTING" | python3 -c "import sys,json; print(json.load(sys.stdin).get('id',''))" 2>/dev/null)
 
-          if [ "$TAG_CHECK" != "200" ]; then
-            echo "Tag $TAG not found on Gitee, creating from main..."
-            CREATE_TAG_RESP=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
-              -X POST "https://gitee.com/api/v5/repos/$REPO/tags" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"access_token\": \"$TOKEN\",
-                \"tag_name\": \"$TAG\",
-                \"refs\": \"main\"
-              }")
-            echo "Create tag response: $CREATE_TAG_RESP"
+          if [ -n "$RELEASE_ID" ]; then
+            echo "Release already exists (ID: $RELEASE_ID), reusing it."
           else
-            echo "Tag $TAG already exists on Gitee."
+            # 2. Release 不存在，检查并创建 tag
+            echo "Release not found, checking tag..."
+            TAG_CHECK=$(curl -s -o /dev/null -w "%{http_code}" \
+              "https://gitee.com/api/v5/repos/$REPO/tags/$TAG?access_token=$TOKEN")
+
+            if [ "$TAG_CHECK" != "200" ]; then
+              echo "Tag not found, creating from main..."
+              curl -s -w "\nHTTP_STATUS:%{http_code}\n" \
+                -X POST "https://gitee.com/api/v5/repos/$REPO/tags" \
+                -H "Content-Type: application/json" \
+                -d "{\"access_token\":\"$TOKEN\",\"tag_name\":\"$TAG\",\"refs\":\"main\"}"
+            fi
+
+            # 3. 创建 Release
+            echo "Creating release..."
+            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+              -X POST "https://gitee.com/api/v5/repos/$REPO/releases" \
+              -H "Content-Type: application/json" \
+              -d "{\"access_token\":\"$TOKEN\",\"tag_name\":\"$TAG\",\"name\":\"Legado $TAG\",\"target_commitish\":\"main\",\"body\":\"由 GitHub Actions 自动构建并发布\"}")
+            echo "Create release response: $RESPONSE"
+
+            HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+            if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "201" ]; then
+              echo "::error::Failed to create Gitee release (HTTP $HTTP_STATUS)"
+              exit 1
+            fi
+
+            RELEASE_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin.rsplit('\n',1)[0])['id'])" 2>/dev/null)
+            echo "Created release ID: $RELEASE_ID"
           fi
-
-          # 创建 Release
-          echo "Creating Gitee release..."
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
-            -X POST "https://gitee.com/api/v5/repos/$REPO/releases" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"access_token\": \"$TOKEN\",
-              \"tag_name\": \"$TAG\",
-              \"name\": \"Legado $TAG\",
-              \"target_commitish\": \"main\",
-              \"body\": \"由 GitHub Actions 自动构建并发布\n\nGitHub 版本更新：\"
-            }")
-          echo "Create release response: $RESPONSE"
-
-          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
-          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "201" ]; then
-            echo "::error::Failed to create Gitee release (HTTP $HTTP_STATUS)"
-            exit 1
-          fi
-
-          # 从响应中提取 release ID（上传附件必须用 ID，不能用 tag name）
-          RELEASE_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin.rsplit('\n',1)[0])['id'])" 2>/dev/null)
-          echo "Release ID: $RELEASE_ID"
 
           if [ -z "$RELEASE_ID" ]; then
-            echo "::error::Failed to extract release ID"
+            echo "::error::Failed to get release ID"
             exit 1
           fi
 
-          # 遍历 apk_output 文件夹上传 APK
+          # 4. 上传 APK
           for file in apk_output/*.apk; do
-            echo "Uploading $file to Gitee (release ID: $RELEASE_ID)..."
-            UPLOAD_RESPONSE=$(curl -s --max-time 120 -w "\nHTTP_STATUS:%{http_code}" \
+            echo "Uploading $file to release $RELEASE_ID..."
+            UPLOAD_RESPONSE=$(curl -s --max-time 300 -w "\nHTTP_STATUS:%{http_code}" \
               -X POST "https://gitee.com/api/v5/repos/$REPO/releases/$RELEASE_ID/attach_files" \
               -F "access_token=$TOKEN" \
               -F "file=@$file")
@@ -149,6 +143,6 @@ jobs:
 
             UPLOAD_STATUS=$(echo "$UPLOAD_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
             if [ "$UPLOAD_STATUS" != "200" ] && [ "$UPLOAD_STATUS" != "201" ]; then
-              echo "::warning::Failed to upload $file to Gitee (HTTP $UPLOAD_STATUS)"
+              echo "::warning::Failed to upload $file (HTTP $UPLOAD_STATUS)"
             fi
           done

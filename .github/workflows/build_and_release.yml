@@ -132,6 +132,37 @@ jobs:
             --no-progress
           echo "✅ 已更新 latest.json"
 
+      - name: Clean up old releases in R2 (Keep latest 10)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+        run: |
+          ENDPOINT="https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+          BUCKET="s3://${{ secrets.R2_BUCKET }}/releases/"
+          
+          echo "Fetching versions from R2..."
+          # 获取所有版本号目录并按版本排序
+          VERSIONS=$(aws s3 ls "$BUCKET" --endpoint-url "$ENDPOINT" | awk '{print $2}' | sed 's/\///g' | sort -V)
+          
+          # 计算版本数量
+          TOTAL_VERSIONS=$(echo "$VERSIONS" | grep -v '^$' | wc -l)
+          echo "Total versions found: $TOTAL_VERSIONS"
+          
+          if [ "$TOTAL_VERSIONS" -gt 10 ]; then
+            # 取出需要删除的旧版本（排除最后10个）
+            VERSIONS_TO_DELETE=$(echo "$VERSIONS" | head -n -10)
+            for ver in $VERSIONS_TO_DELETE; do
+              if [ -n "$ver" ]; then
+                echo "🗑️ Deleting old version: $ver"
+                aws s3 rm "$BUCKET$ver/" --recursive --endpoint-url "$ENDPOINT"
+              fi
+            done
+            echo "✅ Cleanup complete."
+          else
+            echo "No cleanup needed. (<= 10 versions)"
+          fi
+
       - name: Output Download URLs
         run: |
           echo "## 📦 APK 下载地址" >> $GITHUB_STEP_SUMMARY

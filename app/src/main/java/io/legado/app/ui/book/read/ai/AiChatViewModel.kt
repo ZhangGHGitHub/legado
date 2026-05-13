@@ -198,14 +198,17 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
                 val toolsEnabled = AiConfig.toolEnabled
                 if (toolsEnabled) {
                     val tools = AiToolDef.allTools
-                    val responseText = requestWithTools(_messages.toList(), tools)
+                    val responseMsg = requestWithTools(_messages.toList(), tools)
                     synchronized(_messages) {
-                        _messages.add(ChatMessage("assistant", responseText))
+                        _messages.add(responseMsg)
                     }
                 } else {
-                    val responseText = requestOpenAi(_messages.toList())
+                    // 直接保存完整 ChatMessage，保留 reasoningContent，
+                    // 确保下一轮序列化时能将 reasoning_content 回传给 API
+                    val response = requestOpenAiMessage(_messages.toList())
+                    if (response.content.isBlank()) throw Exception("响应内容为空")
                     synchronized(_messages) {
-                        _messages.add(ChatMessage("assistant", responseText))
+                        _messages.add(response.copy(role = "assistant"))
                     }
                 }
             } catch (e: Exception) {
@@ -304,14 +307,15 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
     private suspend fun requestWithTools(
         chatMessages: List<ChatMessage>,
         tools: List<Map<String, Any>>
-    ): String {
+    ): ChatMessage {
         val currentMessages = chatMessages.toMutableList()
         repeat(MAX_TOOL_ROUNDS) {
             val response = requestOpenAiMessage(currentMessages, tools)
             if (response.toolCalls.isNullOrEmpty()) {
-                return response.content
+                // 返回完整 ChatMessage，保留 reasoningContent
+                return response.copy(role = "assistant")
             }
-            // 追加 assistant message（含 tool_calls）
+            // 追加 assistant message（含 tool_calls；reasoning_content 在序列化时一并回传）
             currentMessages.add(response)
 
             // 先执行所有工具，收集结果
@@ -371,7 +375,7 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
                 )
             }
         }
-        return "工具调用轮次已达上限，请重新提问。"
+        return ChatMessage("assistant", "工具调用轮次已达上限，请重新提问。")
     }
 
     /**
@@ -410,6 +414,10 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
                 msg.toolCallId?.let { map["tool_call_id"] = it }
             } else if (!msg.toolCalls.isNullOrEmpty()) {
                 map["content"] = msg.content.ifBlank { "" }
+                // 工具调用的 assistant 消息也可能携带 reasoning_content，需一并回传
+                if (!msg.reasoningContent.isNullOrBlank()) {
+                    map["reasoning_content"] = msg.reasoningContent!!
+                }
                 map["tool_calls"] = msg.toolCalls.map { tc ->
                     mapOf(
                         "id" to tc.id,

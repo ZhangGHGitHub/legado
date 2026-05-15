@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class AiChatViewModel(application: Application) : BaseViewModel(application) {
 
     companion object {
-        private const val MAX_TOOL_ROUNDS = 5
+        private const val MAX_TOOL_ROUNDS = 90
     }
 
     val messagesLiveData = MutableLiveData<List<ChatMessage>>()
@@ -198,9 +198,9 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
                 val toolsEnabled = AiConfig.toolEnabled
                 if (toolsEnabled) {
                     val tools = AiToolDef.allTools
-                    val responseMsg = requestWithTools(_messages.toList(), tools)
+                    val responseMsgs = requestWithTools(_messages.toList(), tools)
                     synchronized(_messages) {
-                        _messages.add(responseMsg)
+                        _messages.addAll(responseMsgs)
                     }
                 } else {
                     // 直接保存完整 ChatMessage，保留 reasoningContent，
@@ -307,16 +307,19 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
     private suspend fun requestWithTools(
         chatMessages: List<ChatMessage>,
         tools: List<Map<String, Any>>
-    ): ChatMessage {
+    ): List<ChatMessage> {
         val currentMessages = chatMessages.toMutableList()
+        val newMessages = mutableListOf<ChatMessage>()
         repeat(MAX_TOOL_ROUNDS) {
             val response = requestOpenAiMessage(currentMessages, tools)
             if (response.toolCalls.isNullOrEmpty()) {
                 // 返回完整 ChatMessage，保留 reasoningContent
-                return response.copy(role = "assistant")
+                newMessages.add(response.copy(role = "assistant"))
+                return newMessages
             }
             // 追加 assistant message（含 tool_calls；reasoning_content 在序列化时一并回传）
             currentMessages.add(response)
+            newMessages.add(response)
 
             // 先执行所有工具，收集结果
             data class ToolCallResult(
@@ -366,16 +369,17 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
                         }
                     }
                 }
-                currentMessages.add(
-                    ChatMessage(
-                        role = "tool",
-                        content = resultJson,
-                        toolCallId = toolCallId
-                    )
+                val toolMsg = ChatMessage(
+                    role = "tool",
+                    content = resultJson,
+                    toolCallId = toolCallId
                 )
+                currentMessages.add(toolMsg)
+                newMessages.add(toolMsg)
             }
         }
-        return ChatMessage("assistant", "工具调用轮次已达上限，请重新提问。")
+        newMessages.add(ChatMessage("assistant", "工具调用轮次已达上限，请重新提问。"))
+        return newMessages
     }
 
     /**
@@ -456,7 +460,12 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
             .addHeader("Content-Type", "application/json")
             .build()
 
-        val responseString = okHttpClient.newCall(request).execute().use { response ->
+        val aiHttpClient = okHttpClient.newBuilder()
+            .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+            .callTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+            .build()
+
+        val responseString = aiHttpClient.newCall(request).execute().use { response ->
             val bodyStr = response.body.string()
             if (!response.isSuccessful) {
                 throw Exception("HTTP ${response.code}: $bodyStr")

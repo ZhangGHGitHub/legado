@@ -24,6 +24,8 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.applyBackgroundTint
 
 class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
@@ -90,6 +92,12 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
             stackFromEnd = true
         }
         binding.recyclerView.adapter = adapter
+
+        // 底部输入栏使用主题底部操作栏背景色
+        binding.bottomBar.setCardBackgroundColor(bottomBackground)
+
+        // 标题文字颜色跟随主题（深色主色→白字，浅色主色→深字）
+        binding.titleBar.setTitleTextColor(primaryTextColor)
     }
 
     private fun bindEvent() {

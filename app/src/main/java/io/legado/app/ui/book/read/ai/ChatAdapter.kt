@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.ai
 
 import android.content.res.ColorStateList
+import androidx.core.graphics.ColorUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +61,12 @@ class ChatAdapter(
                 )
                 holder.binding.ivUserAvatar.setImageResource(R.drawable.ic_person)
             }
+
+            // 用户气泡：带透明度的主色，营造半透明磨砂质感
+            val userBubbleColor = ColorUtils.setAlphaComponent(
+                ThemeStore.primaryColor(context), 45
+            )
+            holder.binding.cardUserBubble.setCardBackgroundColor(userBubbleColor)
 
             // 长按用户气泡显示删除按钮
             holder.binding.tvUserContent.setOnLongClickListener {

@@ -81,8 +81,8 @@
                     android:layout_marginTop="4dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/divider">
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="#18888888">
                     <TextView
                         android:id="@+id/tv_reasoning_content"
                         android:layout_width="wrap_content"
@@ -104,12 +104,13 @@
                 android:layout_marginTop="4dp">
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_ai_bubble"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="18dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/divider">
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="#20888888">
                     <TextView
                         android:id="@+id/tv_ai_content"
                         android:layout_width="wrap_content"
@@ -167,13 +168,13 @@
             android:visibility="gone" />
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_user_bubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="18dp"
             app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorPrimary">
+            app:strokeWidth="0dp">
             <TextView
                 android:id="@+id/tv_user_content"
                 android:layout_width="wrap_content"

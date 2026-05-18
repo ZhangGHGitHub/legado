@@ -21,9 +21,10 @@
         android:padding="8dp" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="8dp"
+        app:cardElevation="4dp"
         app:cardCornerRadius="0dp"
         app:strokeWidth="0dp">
 
@@ -53,8 +54,8 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/divider">
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="#18888888">
                     <EditText
                         android:id="@+id/et_chapter_start"
                         android:layout_width="48dp"
@@ -80,8 +81,8 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/divider">
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="#18888888">
                     <EditText
                         android:id="@+id/et_chapter_end"
                         android:layout_width="48dp"
@@ -117,8 +118,8 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/divider">
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="#18888888">
 
                     <EditText
                         android:id="@+id/et_input"

@@ -119,7 +119,7 @@ object ToolRouter {
     private fun getBookSources(args: Map<*, *>): String {
         val enabled = args["enabled"] as? Boolean
         val group = args["group"] as? String
-        val offset = (args["offset"] as? Double)?.toInt() ?: 0
+        val offset = (args["offset"] as? Number)?.toInt() ?: 0
         val allSources = appDb.bookSourceDao.allPart
         val sources = when (enabled) {
             true -> allSources.filter { it.enabled }
@@ -136,7 +136,7 @@ object ToolRouter {
     private fun getRssSources(args: Map<*, *>): String {
         val enabled = args["enabled"] as? Boolean
         val group = args["group"] as? String
-        val offset = (args["offset"] as? Double)?.toInt() ?: 0
+        val offset = (args["offset"] as? Number)?.toInt() ?: 0
         val sources = when {
             enabled == true -> appDb.rssSourceDao.all.filter { it.enabled }
             enabled == false -> appDb.rssSourceDao.all.filter { !it.enabled }
@@ -184,8 +184,8 @@ object ToolRouter {
 
     private fun getBookContent(args: Map<*, *>): String {
         val bookUrl = args["bookUrl"] as? String ?: return """{"error":"bookUrl 参数不能为空"}"""
-        val chapterIndex = (args["chapterIndex"] as? Double)?.toInt() ?: return """{"error":"chapterIndex 参数不能为空"}"""
-        val maxChars = ((args["maxChars"] as? Double)?.toInt() ?: 2000).coerceIn(1, 8000)
+        val chapterIndex = (args["chapterIndex"] as? Number)?.toInt() ?: return """{"error":"chapterIndex 参数不能为空"}"""
+        val maxChars = ((args["maxChars"] as? Number)?.toInt() ?: 2000).coerceIn(1, 8000)
         val book = appDb.bookDao.getBook(bookUrl) ?: return """{"error":"书架中未找到该书籍"}"""
         val chapter = appDb.bookChapterDao.getChapter(bookUrl, chapterIndex) ?: return """{"error":"未找到该章节，请先确认章节索引正确"}"""
         val rawContent = BookHelp.getContent(book, chapter) ?: return """{"error":"章节内容未缓存，请在阅读界面打开该章节后再试"}"""
@@ -199,7 +199,7 @@ object ToolRouter {
 
     private fun searchOnlineBook(args: Map<*, *>): String {
         val keyword = args["keyword"] as? String ?: return """{"error":"keyword 参数不能为空"}"""
-        val limit = ((args["limit"] as? Double)?.toInt() ?: 10).coerceIn(1, 30)
+        val limit = ((args["limit"] as? Number)?.toInt() ?: 10).coerceIn(1, 30)
         // WebSocket 搜索不适合在工具层同步阻塞实现，返回提示引导用户通过 UI 操作
         return GSON.toJson(mapOf("success" to false,
             "error" to "在线搜索需要通过 legado 阅读界面操作，AI 工具层暂不支持 WebSocket 流式搜索。建议：告知用户在 legado 搜索「$keyword」并将结果书名告知助手后再加入书架。",
@@ -207,8 +207,8 @@ object ToolRouter {
     }
 
     private fun getReplaceRules(args: Map<*, *>): String {
-        val offset = (args["offset"] as? Double)?.toInt() ?: 0
-        val limit = ((args["limit"] as? Double)?.toInt() ?: 50).coerceIn(1, 100)
+        val offset = (args["offset"] as? Number)?.toInt() ?: 0
+        val limit = ((args["limit"] as? Number)?.toInt() ?: 50).coerceIn(1, 100)
         val enabledOnly = args["enabledOnly"] as? Boolean ?: false
         val allRules = appDb.replaceRuleDao.all
         val filtered = if (enabledOnly) allRules.filter { it.isEnabled } else allRules
@@ -222,8 +222,8 @@ object ToolRouter {
 
     private fun getThoughts(args: Map<*, *>): String {
         val bookName = args["bookName"] as? String
-        val offset = (args["offset"] as? Double)?.toInt() ?: 0
-        val limit = ((args["limit"] as? Double)?.toInt() ?: 20).coerceIn(1, 100)
+        val offset = (args["offset"] as? Number)?.toInt() ?: 0
+        val limit = ((args["limit"] as? Number)?.toInt() ?: 20).coerceIn(1, 100)
         val orderBy = args["orderBy"] as? String ?: "createTime"
         val order = args["order"] as? String ?: "desc"
         val allThoughts = if (bookName.isNullOrBlank()) {
@@ -251,8 +251,8 @@ object ToolRouter {
         val bookName = args["bookName"] as? String
         val startDateStr = args["startDate"] as? String
         val endDateStr = args["endDate"] as? String
-        val offset = (args["offset"] as? Double)?.toInt() ?: 0
-        val limit = ((args["limit"] as? Double)?.toInt() ?: 20).coerceIn(1, 100)
+        val offset = (args["offset"] as? Number)?.toInt() ?: 0
+        val limit = ((args["limit"] as? Number)?.toInt() ?: 20).coerceIn(1, 100)
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val dayMs = 86400_000L
         val endTs = if (endDateStr != null) (sdf.parse(endDateStr)?.time ?: System.currentTimeMillis()) + dayMs else System.currentTimeMillis()
@@ -296,8 +296,8 @@ object ToolRouter {
 
     private fun saveBookProgress(args: Map<*, *>): String {
         val bookUrl = args["bookUrl"] as? String ?: return """{"error":"bookUrl 参数不能为空"}"""
-        val durChapterIndex = (args["durChapterIndex"] as? Double)?.toInt() ?: return """{"error":"durChapterIndex 参数不能为空"}"""
-        val durChapterPos = (args["durChapterPos"] as? Double)?.toInt() ?: 0
+        val durChapterIndex = (args["durChapterIndex"] as? Number)?.toInt() ?: return """{"error":"durChapterIndex 参数不能为空"}"""
+        val durChapterPos = (args["durChapterPos"] as? Number)?.toInt() ?: 0
         val durChapterTitle = args["durChapterTitle"] as? String
         val book = appDb.bookDao.getBook(bookUrl) ?: return """{"error":"书架中未找到该书籍"}"""
         book.durChapterIndex = durChapterIndex
@@ -314,7 +314,7 @@ object ToolRouter {
 
     private fun rateBook(args: Map<*, *>): String {
         val bookUrl = args["bookUrl"] as? String ?: return """{"error":"bookUrl 参数不能为空"}"""
-        val rating = (args["rating"] as? Double)?.toFloat() ?: return """{"error":"rating 参数不能为空"}"""
+        val rating = (args["rating"] as? Number)?.toFloat() ?: return """{"error":"rating 参数不能为空"}"""
         if (rating < 0f || rating > 5f) return """{"error":"rating 必须在 0.0 到 5.0 之间"}"""
         val book = appDb.bookDao.getBook(bookUrl) ?: return """{"error":"书架中未找到该书籍"}"""
         val previousRating = book.bookRating
@@ -336,7 +336,7 @@ object ToolRouter {
         val resultItems = mutableListOf<Map<String, Any?>>()
         notesRaw.forEach { item ->
             val m = item as? Map<*, *> ?: run { failed++; return@forEach }
-            val chapterIndex = (m["chapterIndex"] as? Double)?.toInt() ?: run { failed++; return@forEach }
+            val chapterIndex = (m["chapterIndex"] as? Number)?.toInt() ?: run { failed++; return@forEach }
             val thoughtText = (m["thought"] as? String)?.takeIf { it.isNotBlank() } ?: run { failed++; return@forEach }
             val chapter = appDb.bookChapterDao.getChapter(bookUrl, chapterIndex)
             val chapterName = chapter?.title ?: "第${chapterIndex + 1}章"
@@ -449,7 +449,7 @@ object ToolRouter {
 
     private suspend fun batchMarkBookStatus(args: Map<*, *>): ToolExecuteResult {
         val bookUrl = args["bookUrl"] as? String ?: return ToolExecuteResult.Data("""{"error":"bookUrl 参数不能为空"}""")
-        val status = (args["status"] as? Double)?.toInt() ?: return ToolExecuteResult.Data("""{"error":"status 参数不能为空"}""")
+        val status = (args["status"] as? Number)?.toInt() ?: return ToolExecuteResult.Data("""{"error":"status 参数不能为空"}""")
         if (status < 0 || status > 10) return ToolExecuteResult.Data("""{"error":"status 必须在 0 到 10 之间"}""")
         val book = appDb.bookDao.getBook(bookUrl) ?: return ToolExecuteResult.Data("""{"error":"书架中未找到该书籍"}""")
         val statusLabel = readIterationLabel(status)
@@ -490,7 +490,7 @@ object ToolRouter {
                             isRegex = m["isRegex"] as? Boolean ?: false,
                             scope = m["scope"] as? String ?: "",
                             isEnabled = m["isEnabled"] as? Boolean ?: true,
-                            order = (m["order"] as? Double)?.toInt() ?: if (isNew) appDb.replaceRuleDao.maxOrder + 1 else 0
+                            order = (m["order"] as? Number)?.toInt() ?: if (isNew) appDb.replaceRuleDao.maxOrder + 1 else 0
                         )
                         appDb.replaceRuleDao.insert(rule)
                         if (isNew) { created++; mapOf("id" to id, "name" to rule.name, "action" to "created") }

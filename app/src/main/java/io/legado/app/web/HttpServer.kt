@@ -5,6 +5,8 @@ import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
+import io.legado.app.api.controller.BookThoughtController
+import io.legado.app.api.controller.ReadRecordController
 import io.legado.app.api.controller.ReplaceRuleController
 import io.legado.app.api.controller.RssSourceController
 import io.legado.app.help.coroutine.Coroutine
@@ -66,6 +68,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                             "/saveReplaceRule" -> ReplaceRuleController.saveRule(postData)
                             "/deleteReplaceRule" -> ReplaceRuleController.delete(postData)
                             "/testReplaceRule" -> ReplaceRuleController.testRule(postData)
+                            "/saveBookThought" -> BookThoughtController.saveBookThought(postData)
+                            "/deleteBookThought" -> BookThoughtController.deleteBookThought(postData)
                             else -> null
                         }
                     }
@@ -87,6 +91,11 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/getRssSource" -> RssSourceController.getSource(parameters)
                         "/getRssSources" -> RssSourceController.sources
                         "/getReplaceRules" -> ReplaceRuleController.allRules
+                        "/getBookThoughts" -> BookThoughtController.getBookThoughts(parameters)
+                        "/getThoughtsByChapter" -> BookThoughtController.getThoughtsByChapter(parameters)
+                        "/getReadRecords" -> ReadRecordController.getReadRecords(parameters)
+                        "/getReadTime" -> ReadRecordController.getReadTime(parameters)
+                        "/getDetailedReadRecords" -> ReadRecordController.getDetailedReadRecords(parameters)
                         else -> null
                     }
                 }

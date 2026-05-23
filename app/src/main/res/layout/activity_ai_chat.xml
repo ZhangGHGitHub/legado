@@ -24,7 +24,7 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="4dp"
+        app:cardElevation="2dp"
         app:cardCornerRadius="0dp"
         app:strokeWidth="0dp">
 
@@ -55,7 +55,7 @@
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#18888888">
+                    app:cardBackgroundColor="#22FFFFFF">
                     <EditText
                         android:id="@+id/et_chapter_start"
                         android:layout_width="48dp"
@@ -82,7 +82,7 @@
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#18888888">
+                    app:cardBackgroundColor="#22FFFFFF">
                     <EditText
                         android:id="@+id/et_chapter_end"
                         android:layout_width="48dp"
@@ -119,7 +119,7 @@
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#18888888">
+                    app:cardBackgroundColor="#22FFFFFF">
 
                     <EditText
                         android:id="@+id/et_input"
@@ -145,12 +145,15 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:padding="0dp"
+                    app:backgroundTint="@android:color/transparent"
                     app:icon="@drawable/ic_send"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"
                     app:iconSize="20dp"
+                    app:iconTint="@android:color/white"
                     app:shapeAppearanceOverlay="@style/AiChatCircleShapeOverlay"
-                    app:strokeWidth="0dp"
+                    app:strokeColor="@android:color/white"
+                    app:strokeWidth="1dp"
                     android:contentDescription="@string/ai_send" />
             </LinearLayout>
 

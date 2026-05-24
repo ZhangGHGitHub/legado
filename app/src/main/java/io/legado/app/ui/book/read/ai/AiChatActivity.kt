@@ -38,7 +38,7 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
     }
 
     /** 是否为独立模式（从"我的"页面进入，无书籍上下文） */
-    private val isStandalone: Boolean get() = ReadBook.book == null
+    private val isStandalone: Boolean get() = intent.getBooleanExtra("isStandalone", false) || ReadBook.book == null
 
     override fun initTheme() {
         // 保持 Material 主题，不允许 BaseActivity 覆盖为 AppCompat 主题
@@ -313,15 +313,11 @@ class AiChatActivity : BaseActivity<ActivityAiChatBinding>(false) {
                 return true
             }
             R.id.menu_ai_summarize -> {
-                if (isStandalone) {
-                    toastOnUi("独立模式下无法归纳记忆，请在阅读界面中使用")
-                    return true
-                }
-                val start = binding.etChapterStart.text.toString().toIntOrNull()
+                val start = if (isStandalone) 0 else binding.etChapterStart.text.toString().toIntOrNull()
                     ?: (ReadBook.durChapterIndex + 1)
-                val end = binding.etChapterEnd.text.toString().toIntOrNull()
+                val end = if (isStandalone) 0 else binding.etChapterEnd.text.toString().toIntOrNull()
                     ?: (ReadBook.durChapterIndex + 1)
-                viewModel.summarizeAndMemory(start, end)
+                viewModel.saveSession(start, end)
                 return true
             }
         }

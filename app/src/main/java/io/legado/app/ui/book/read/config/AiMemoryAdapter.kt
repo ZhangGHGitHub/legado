@@ -9,6 +9,7 @@ import io.legado.app.databinding.ItemAiMemoryBinding
 import io.legado.app.help.config.AiMemoryItem
 
 class AiMemoryAdapter(
+    private val onClick: (AiMemoryItem) -> Unit,
     private val onDelete: (AiMemoryItem) -> Unit
 ) : ListAdapter<AiMemoryItem, AiMemoryAdapter.MemoryViewHolder>(DIFF_CALLBACK) {
 
@@ -21,6 +22,9 @@ class AiMemoryAdapter(
         val item = getItem(position)
         holder.binding.tvChapterRange.text = item.chapterRange
         holder.binding.tvContentPreview.text = item.preview
+        holder.binding.root.setOnClickListener {
+            onClick(item)
+        }
         holder.binding.ivDelete.setOnClickListener {
             onDelete(item)
         }

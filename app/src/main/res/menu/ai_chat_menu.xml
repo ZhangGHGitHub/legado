@@ -9,7 +9,7 @@
     <item
         android:id="@+id/menu_ai_summarize"
         android:icon="@drawable/ic_save"
-        android:title="归纳记忆"
+        android:title="保存会话"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_ai_settings"

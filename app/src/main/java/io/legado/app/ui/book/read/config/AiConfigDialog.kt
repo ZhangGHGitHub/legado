@@ -38,7 +38,7 @@ class AiConfigDialog : BaseDialogFragment(R.layout.dialog_ai_config) {
     }
 
     fun updateMemoryLength() {
-        binding.tvMemoryLength.text = AiConfig.memory.length.toString()
+        binding.tvMemoryLength.text = "${AiConfig.memoryList.size} 条"
     }
 
     private fun initToolbar() {

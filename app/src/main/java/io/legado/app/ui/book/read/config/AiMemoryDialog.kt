@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogAiMemoryBinding
 import io.legado.app.help.config.AiConfig
+import io.legado.app.ui.book.read.ai.AiChatActivity
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -16,13 +17,26 @@ class AiMemoryDialog : BaseDialogFragment(R.layout.dialog_ai_memory) {
 
     private val binding by viewBinding(DialogAiMemoryBinding::bind)
     private val adapter by lazy {
-        AiMemoryAdapter { item ->
-            val list = AiConfig.memoryList.toMutableList()
-            list.remove(item)
-            AiConfig.memoryList = list
-            updateList()
-            notifyConfigDialog()
-        }
+        AiMemoryAdapter(
+            onClick = { item ->
+                (activity as? AiChatActivity)?.viewModel?.restoreSession(item.messagesJson)
+                dismiss()
+                val fragments = parentFragmentManager.fragments
+                for (fragment in fragments) {
+                    if (fragment is AiConfigDialog) {
+                        fragment.dismiss()
+                        break
+                    }
+                }
+            },
+            onDelete = { item ->
+                val list = AiConfig.memoryList.toMutableList()
+                list.remove(item)
+                AiConfig.memoryList = list
+                updateList()
+                notifyConfigDialog()
+            }
+        )
     }
 
     override fun onStart() {

@@ -166,7 +166,9 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
 
                 "fileManage" -> startActivity<FileManageActivity>()
                 "readRecord" -> startActivity<ReadRecordActivity>()
-                "aiAssistant" -> startActivity<AiChatActivity>()
+                "aiAssistant" -> startActivity<AiChatActivity> {
+                    putExtra("isStandalone", true)
+                }
                 "obsidianExport" -> showDialogFragment(ObsidianExportDialog.newInstance())
                 "about" -> startActivity<AboutActivity>()
                 "exit" -> activity?.finish()

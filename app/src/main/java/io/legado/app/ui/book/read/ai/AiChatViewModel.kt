@@ -236,39 +236,50 @@ class AiChatViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun summarizeAndMemory(start: Int, end: Int) {
-        if (!isGenerating.compareAndSet(false, true)) return
-        isGeneratingLiveData.postValue(true)
+    fun saveSession(start: Int, end: Int) {
         if (_messages.isEmpty()) {
-            setGenerating(false)
+            getApplication<Application>().toastOnUi("当前没有会话可保存")
             return
         }
 
         execute {
             try {
-                val tempMessages = _messages.toMutableList()
-                tempMessages.add(
-                    ChatMessage(
-                        "user",
-                        "请简要总结以上我们探讨的核心内容，提取关键点。这段总结将被作为记忆保留，用于未来的对话上下文。"
-                    )
-                )
-
-                val responseText = requestOpenAi(tempMessages)
-
-                val rangeStr = if (start == end) "第${start}章" else "第${start}-${end}章"
+                val rangeStr = if (start == 0 && end == 0) "独立会话" else if (start == end) "第${start}章" else "第${start}-${end}章"
+                
+                // 提取预览：第一条用户的消息
+                val firstUserMsg = _messages.firstOrNull { it.role == "user" }?.content ?: "空对话"
+                
+                val messagesJson = GSON.toJson(_messages)
                 val currentList = AiConfig.memoryList.toMutableList()
-                currentList.add(AiMemoryItem(chapterRange = rangeStr, content = responseText))
+                currentList.add(AiMemoryItem(chapterRange = rangeStr, content = firstUserMsg, messagesJson = messagesJson))
                 AiConfig.memoryList = currentList
 
-                _messages.add(ChatMessage("assistant", "【系统提示】记忆已更新。\n\n新记忆内容：\n$responseText"))
-                getApplication<Application>().toastOnUi("本次交流已保存")
+                getApplication<Application>().toastOnUi("本次会话已保存")
             } catch (e: Exception) {
-                _messages.add(ChatMessage("assistant", "记忆提取失败: ${e.message}"))
-            } finally {
-                setGenerating(false)
+                getApplication<Application>().toastOnUi("保存失败: ${e.message}")
+            }
+        }
+    }
+
+    fun restoreSession(messagesJson: String?) {
+        if (messagesJson.isNullOrBlank()) {
+            getApplication<Application>().toastOnUi("无法恢复，记录为空")
+            return
+        }
+        execute {
+            try {
+                val savedMessages = GSON.fromJsonArray<ChatMessage>(messagesJson).getOrNull()
+                synchronized(_messages) {
+                    _messages.clear()
+                    if (savedMessages != null) {
+                        _messages.addAll(savedMessages)
+                    }
+                }
                 syncCache()
                 messagesLiveData.postValue(_messages.toList())
+                getApplication<Application>().toastOnUi("会话已恢复")
+            } catch (e: Exception) {
+                getApplication<Application>().toastOnUi("恢复会话失败: ${e.message}")
             }
         }
     }

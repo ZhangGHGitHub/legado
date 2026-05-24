@@ -13,7 +13,8 @@ import splitties.init.appCtx
 data class AiMemoryItem(
     val id: Long = System.currentTimeMillis(),
     val chapterRange: String,
-    val content: String
+    val content: String,
+    val messagesJson: String? = null
 ) {
     val preview: String get() = content.take(15) + if (content.length > 15) "..." else ""
 }
@@ -75,9 +76,7 @@ object AiConfig {
 
     var memory: String
         get() {
-            val list = memoryList
-            if (list.isEmpty()) return ""
-            return list.joinToString("\n\n") { "【${it.chapterRange}】\n${it.content}" }
+            return ""
         }
         set(value) {
             appCtx.putPrefString(KEY_AI_MEMORY, value)

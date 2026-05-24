@@ -12,7 +12,7 @@
         app:attachToActivity="false"
         app:fitStatusBar="false"
         app:navigationIcon="@null"
-        app:themeMode="1"
+        app:themeMode="dark"
         app:title="@string/ai_companion"
         xmlns:app="http://schemas.android.com/apk/res-auto" />
 

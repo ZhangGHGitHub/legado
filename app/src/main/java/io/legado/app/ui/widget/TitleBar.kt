@@ -186,8 +186,14 @@ class TitleBar @JvmOverloads constructor(
             } else if (!opaque && context.transparentNavBar) {
                 setBackgroundColor(Color.TRANSPARENT)
             } else {
-                setBackgroundColor(context.primaryColor)
-                elevation = context.elevation
+                val primaryColor = context.primaryColor
+                // MD3 tonal elevation: blend primary color with surface for subtle depth
+                val surfaceColor = Color.parseColor(
+                    if (ColorUtils.isColorLight(primaryColor)) "#FFFBFE" else "#1C1B1F"
+                )
+                val tonalColor = blendColors(primaryColor, surfaceColor, 0.08f)
+                setBackgroundColor(tonalColor)
+                elevation = 0f
             }
 
             stateListAnimator = null
@@ -274,6 +280,24 @@ class TitleBar @JvmOverloads constructor(
                 it.setSupportActionBar(toolbar)
                 it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
             }
+        }
+    }
+
+    companion object {
+        /**
+         * Blend two colors: ratio=0 returns base, ratio=1 returns overlay.
+         */
+        fun blendColors(
+            @ColorInt base: Int,
+            @ColorInt overlay: Int,
+            ratio: Float
+        ): Int {
+            val inverseRatio = 1f - ratio
+            val a = (Color.alpha(base) * inverseRatio + Color.alpha(overlay) * ratio).toInt()
+            val r = (Color.red(base) * inverseRatio + Color.red(overlay) * ratio).toInt()
+            val g = (Color.green(base) * inverseRatio + Color.green(overlay) * ratio).toInt()
+            val b = (Color.blue(base) * inverseRatio + Color.blue(overlay) * ratio).toInt()
+            return Color.argb(a, r, g, b)
         }
     }
 

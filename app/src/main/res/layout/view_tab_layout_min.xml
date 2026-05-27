@@ -7,6 +7,7 @@
     android:theme="?attr/actionBarStyle"
     android:background="@android:color/transparent"
     app:tabBackground="@android:color/transparent"
-    app:tabRippleColor="@android:color/transparent"
+    app:tabRippleColor="@color/transparent20"
+    app:tabIndicatorHeight="3dp"
     app:tabMaxWidth="100dp"
     app:tabMinWidth="10dp" />

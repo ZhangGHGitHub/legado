@@ -36,4 +36,13 @@
     <dimen name="fastscroll_scrollbar_padding_end">8dp</dimen>
 
     <dimen name="fixed_height_bottom_padding">8dp</dimen>
+
+    <!-- MD3 Corner & Padding Tokens -->
+    <dimen name="md3_corner_small">12dp</dimen>
+    <dimen name="md3_corner_medium">16dp</dimen>
+    <dimen name="md3_corner_large">28dp</dimen>
+    <dimen name="md3_corner_extraLarge">28dp</dimen>
+    <dimen name="md3_padding_small">8dp</dimen>
+    <dimen name="md3_padding_medium">16dp</dimen>
+    <dimen name="md3_padding_large">24dp</dimen>
 </resources>

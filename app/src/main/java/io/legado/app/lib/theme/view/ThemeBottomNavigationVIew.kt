@@ -33,12 +33,15 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
         }
         val textIsDark = ColorUtils.isColorLight(bgColor)
         val textColor = context.getSecondaryTextColor(textIsDark)
+        val accentColor = ThemeStore.accentColor(context)
         val colorStateList = Selector.colorBuild()
             .setDefaultColor(textColor)
-            .setSelectedColor(ThemeStore.accentColor(context))
+            .setSelectedColor(accentColor)
             .create()
         itemIconTintList = colorStateList
         itemTextColor = colorStateList
+        // MD3: Enable labeled navigation
+        isItemHorizontalTranslationEnabled = true
         if (AppConfig.isEInkMode || transparentNavBar) {
             isItemHorizontalTranslationEnabled = false
             itemBackground = Color.TRANSPARENT.toDrawable()

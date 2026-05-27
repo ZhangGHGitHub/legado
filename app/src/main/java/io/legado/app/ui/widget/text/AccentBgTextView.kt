@@ -16,7 +16,7 @@ class AccentBgTextView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : AppCompatTextView(context, attrs) {
 
-    private var radius = 0
+    private var radius = 12.dpToPx()
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AccentBgTextView)

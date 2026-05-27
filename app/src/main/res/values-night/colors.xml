@@ -7,8 +7,8 @@
     <color name="disabled">@color/md_dark_disabled</color>
 
     <color name="background">@color/md_grey_900</color>
-    <color name="background_card">@color/md_grey_850</color>
-    <color name="background_menu">@color/md_grey_800</color>
+    <color name="background_card">@color/md3_surfaceContainer</color>
+    <color name="background_menu">@color/md3_surfaceContainerHigh</color>
     <color name="background_prefs">#10303030</color>
 
     <color name="night_mask">#69000000</color>
@@ -42,4 +42,19 @@
 
     <!--statusBarBackground-->
     <color name="navigation_bar_bag">#222222</color>
+
+    <!-- MD3 Surface Colors (Dark) -->
+    <color name="md3_surface">#1C1B1F</color>
+    <color name="md3_onSurface">#E6E1E5</color>
+    <color name="md3_surfaceVariant">#49454F</color>
+    <color name="md3_onSurfaceVariant">#CAC4D0</color>
+    <color name="md3_surfaceContainer">#211F26</color>
+    <color name="md3_surfaceContainerHigh">#2B2930</color>
+    <color name="md3_surfaceContainerHighest">#36343B</color>
+    <color name="md3_outline">#938F99</color>
+    <color name="md3_outlineVariant">#49454F</color>
+    <color name="md3_primary">#A8C7FA</color>
+    <color name="md3_onPrimary">#003063</color>
+    <color name="md3_primaryContainer">#004A93</color>
+    <color name="md3_onPrimaryContainer">#D3E3FD</color>
 </resources>

@@ -72,8 +72,8 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="3dp"
-                            app:cardCornerRadius="5dp"
-                            app:cardElevation="8dp">
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="2dp">
 
                             <io.legado.app.ui.widget.image.CoverImageView
                                 android:id="@+id/iv_cover"
@@ -376,8 +376,9 @@
             android:id="@+id/fl_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background_menu"
+            android:background="@color/md3_surfaceContainer"
             android:orientation="horizontal"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView

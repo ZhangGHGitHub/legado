@@ -37,10 +37,18 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="Base.AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Base.AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/primaryDark</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/background</item>
+        <item name="colorOnSurface">@color/primaryText</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Legado.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Legado.MediumComponent</item>
         <item name="actionOverflowMenuStyle">@style/Style.PopupMenu</item>
         <item name="android:itemTextAppearance">@style/Style.MenuItemText</item>
         <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
@@ -48,15 +56,15 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
+    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="colorAccent">@color/md_grey_900</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.MaterialComponents.Dark">
         <item name="colorAccent">@color/md_grey_50</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="overlapAnchor">false</item>
         <item name="colorAccent">@color/md_grey_900</item>
     </style>
@@ -75,7 +83,7 @@
         <item name="android:listPreferredItemHeightSmall">44dp</item>
     </style>
 
-    <style name="Style.Toolbar.NoPadding" parent="Base.Widget.AppCompat.Toolbar">
+    <style name="Style.Toolbar.NoPadding" parent="Base.Widget.MaterialComponents.Toolbar">
         <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 
@@ -84,8 +92,18 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="Style.PopupMenu" parent="Widget.AppCompat.PopupMenu">
+    <style name="Style.PopupMenu" parent="Widget.MaterialComponents.PopupMenu">
         <item name="android:popupBackground">@drawable/bg_popup_menu</item>
+    </style>
+
+    <style name="ShapeAppearance.Legado.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Legado.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 
 
@@ -97,8 +115,8 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">20sp</item>
+    <style name="ToolbarTitle" parent="@style/TextAppearance.MaterialComponents.Toolbar.Title">
+        <item name="android:textSize">22sp</item>
     </style>
 
     //*******************Widget Style**********************************//

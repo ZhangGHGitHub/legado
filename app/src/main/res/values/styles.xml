@@ -83,7 +83,7 @@
         <item name="android:listPreferredItemHeightSmall">44dp</item>
     </style>
 
-    <style name="Style.Toolbar.NoPadding" parent="Base.Widget.MaterialComponents.Toolbar">
+    <style name="Style.Toolbar.NoPadding" parent="Widget.MaterialComponents.Toolbar">
         <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 
@@ -115,7 +115,7 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    <style name="ToolbarTitle" parent="@style/TextAppearance.MaterialComponents.Toolbar.Title">
+    <style name="ToolbarTitle" parent="@style/TextAppearance.MaterialComponents.Headline6">
         <item name="android:textSize">22sp</item>
     </style>
 

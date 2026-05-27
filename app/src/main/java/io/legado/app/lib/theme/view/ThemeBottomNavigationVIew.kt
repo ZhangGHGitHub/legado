@@ -40,8 +40,11 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
             .create()
         itemIconTintList = colorStateList
         itemTextColor = colorStateList
-        // MD3: Enable labeled navigation
+
+        // MD3: Enable labeled navigation with pill indicator
         isItemHorizontalTranslationEnabled = true
+        labelVisibilityMode = LABEL_VISIBILITY_LABELED
+
         if (AppConfig.isEInkMode || transparentNavBar) {
             isItemHorizontalTranslationEnabled = false
             itemBackground = Color.TRANSPARENT.toDrawable()

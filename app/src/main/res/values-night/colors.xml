@@ -6,7 +6,7 @@
 
     <color name="disabled">@color/md_dark_disabled</color>
 
-    <color name="background">@color/md_grey_900</color>
+    <color name="background">@color/md3_surface</color>
     <color name="background_card">@color/md3_surfaceContainer</color>
     <color name="background_menu">@color/md3_surfaceContainerHigh</color>
     <color name="background_prefs">#10303030</color>
@@ -18,7 +18,7 @@
     <color name="transparent30">#30ffffff</color>
     <color name="transparent50">#50ffffff</color>
 
-    <color name="bg_divider_line">#363636</color>
+    <color name="bg_divider_line">@color/md3_outlineVariant</color>
 
     <color name="btn_bg_press">#634D4D4D</color>
     <color name="btn_bg_press_2">#63686868</color>
@@ -32,10 +32,10 @@
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#565656</color>
 
-    <color name="primaryText">#ffffffff</color>
-    <color name="secondaryText">#b3ffffff</color>
-    <color name="tv_text_summary">#B3B3B3</color>
-    <color name="menu_color_default">#b7b7b7</color>
+    <color name="primaryText">@color/md3_onSurface</color>
+    <color name="secondaryText">@color/md3_onSurfaceVariant</color>
+    <color name="tv_text_summary">@color/md3_onSurfaceVariant</color>
+    <color name="menu_color_default">@color/md3_onSurface</color>
 
 
     <color name="tv_text_button_nor">#303030</color>

@@ -80,6 +80,7 @@ class OtherConfigFragment : PreferenceFragment(),
         onlyUpdateReadPref = findPreference<Preference>(PreferKey.onlyUpdateRead)?.also {
             it.isVisible = AppConfig.autoRefreshBook
         }
+        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -1,9 +1,11 @@
 package io.legado.app.utils
 
 import android.app.Activity
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.StateListDrawable
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.google.android.material.card.MaterialCardView
 import io.legado.app.R
@@ -31,9 +33,24 @@ private fun applyCardBackgroundRecursive(view: View, newColor: Int, defaultColor
     } else if (view.background != null) {
         try {
             val bg = view.background
-            if (bg is android.graphics.drawable.ColorDrawable) {
-                if (bg.color == defaultColor) {
-                    view.setBackgroundColor(newColor)
+            when (bg) {
+                is ColorDrawable -> {
+                    if (bg.color == defaultColor) {
+                        view.setBackgroundColor(newColor)
+                    }
+                }
+                is GradientDrawable -> {
+                    if (bg.color?.defaultColor == defaultColor) {
+                        bg.setColor(newColor)
+                    }
+                }
+                is StateListDrawable -> {
+                    for (i in 0 until bg.stateCount) {
+                        val drawable = bg.getStateDrawable(i) ?: continue
+                        if (drawable is GradientDrawable && drawable.color?.defaultColor == defaultColor) {
+                            drawable.setColor(newColor)
+                        }
+                    }
                 }
             }
         } catch (_: Exception) {}

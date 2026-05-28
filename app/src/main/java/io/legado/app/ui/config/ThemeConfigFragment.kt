@@ -106,6 +106,7 @@ class ThemeConfigFragment : PreferenceFragment(),
                 }
             }
         }
+        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -320,6 +321,7 @@ class ThemeConfigFragment : PreferenceFragment(),
     private fun upTheme(isNightTheme: Boolean) {
         if (AppConfig.isNightTheme == isNightTheme) {
             listView.post {
+                if (!isAdded) return@post
                 ThemeConfig.applyTheme(requireContext())
                 recreateActivities()
             }

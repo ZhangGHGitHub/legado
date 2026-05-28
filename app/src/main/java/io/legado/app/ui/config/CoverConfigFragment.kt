@@ -51,6 +51,7 @@ class CoverConfigFragment : PreferenceFragment(),
             ?.isEnabled = getPrefBoolean(PreferKey.coverShowName)
         findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
             ?.isEnabled = getPrefBoolean(PreferKey.coverShowNameN)
+        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

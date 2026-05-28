@@ -66,6 +66,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
 //        findPreference<SwitchPreference>(PreferKey.welcomeShowIconDark)?.let {
 //            it.isEnabled = !welcomeImageDark.isNullOrEmpty()
 //        }
+        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

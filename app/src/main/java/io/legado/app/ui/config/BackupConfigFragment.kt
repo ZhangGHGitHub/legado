@@ -132,6 +132,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 restoreFromLocal()
                 true
             }
+        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

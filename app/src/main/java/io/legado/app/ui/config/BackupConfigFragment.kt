@@ -132,7 +132,6 @@ class BackupConfigFragment : PreferenceFragment(),
                 restoreFromLocal()
                 true
             }
-        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -141,6 +140,7 @@ class BackupConfigFragment : PreferenceFragment(),
         preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         listView.setEdgeEffectColor(primaryColor)
         activity?.addMenuProvider(this, viewLifecycleOwner)
+        listView.post { setupCardBackgrounds() }
         if (!LocalConfig.backupHelpVersionIsLast) {
             showHelp("webDavHelp")
         }

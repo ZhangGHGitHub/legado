@@ -83,6 +83,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         super.onCreate(savedInstanceState)
         setupSystemBar()
         setContentView(binding.root)
+        findViewById<View>(android.R.id.content).applyBackgroundTint(backgroundColor)
         upBackgroundImage()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             (findViewById(R.id.title_bar) as? TitleBar)
@@ -138,23 +139,14 @@ abstract class BaseActivity<VB : ViewBinding>(
     open fun initTheme() {
         when (theme) {
             Theme.Transparent -> setTheme(R.style.AppTheme_Transparent)
-            Theme.Dark -> {
-                setTheme(R.style.AppTheme_Dark)
-               window.decorView.applyBackgroundTint(backgroundColor)
-            }
-
-            Theme.Light -> {
-                setTheme(R.style.AppTheme_Light)
-               window.decorView.applyBackgroundTint(backgroundColor)
-            }
-
+            Theme.Dark -> setTheme(R.style.AppTheme_Dark)
+            Theme.Light -> setTheme(R.style.AppTheme_Light)
             else -> {
                 if (ColorUtils.isColorLight(primaryColor)) {
                     setTheme(R.style.AppTheme_Light)
                 } else {
                     setTheme(R.style.AppTheme_Dark)
                 }
-               window.decorView.applyBackgroundTint(backgroundColor)
             }
         }
         applyCardBackground()
@@ -164,7 +156,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         if (imageBg) {
             try {
                 ThemeConfig.getBgImage(this, windowManager.windowSize)?.let { drawable ->
-                   window.decorView.background = drawable
+                    findViewById<View>(android.R.id.content).background = drawable
                 }
             } catch (_: OutOfMemoryError) {
                 toastOnUi("背景图片太大,内存溢出")

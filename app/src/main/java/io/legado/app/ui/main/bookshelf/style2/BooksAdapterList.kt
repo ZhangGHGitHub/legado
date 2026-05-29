@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf.style2
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import io.legado.app.databinding.ItemBookshelfListGroupBinding
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.ReadIterationHelper
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.theme.cardBackground
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
@@ -59,6 +61,11 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(item: Book, position: Int) = binding.run {
+            val corner = 8f * root.resources.displayMetrics.density
+            root.background = GradientDrawable().apply {
+                setColor(context.cardBackground)
+                this.cornerRadius = corner
+            }
             tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
@@ -129,6 +136,11 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(item: Book, position: Int) = binding.run {
+            val corner = 8f * root.resources.displayMetrics.density
+            root.background = GradientDrawable().apply {
+                setColor(context.cardBackground)
+                this.cornerRadius = corner
+            }
             tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle

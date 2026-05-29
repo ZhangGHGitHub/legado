@@ -2,9 +2,11 @@ package io.legado.app.lib.prefs.fragment
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.StateListDrawable
 import android.os.Bundle
 import android.view.View
-import android.view.View.OnScrollChangeListener
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -13,11 +15,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.lib.prefs.EditTextPreferenceDialog
 import io.legado.app.lib.prefs.ListPreferenceDialog
 import io.legado.app.lib.prefs.MultiSelectListPreferenceDialog
+import io.legado.app.lib.theme.cardBackground
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.dpToPx
 
@@ -39,117 +41,140 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     /**
-     * Call after addPreferencesFromResource() to compute card backgrounds
-     * and apply them via a scroll listener (reapplies on every scroll settle).
+     * Call after addPreferencesFromResource() to compute and apply MD3 card backgrounds.
+     * Uses OnChildAttachStateChangeListener to apply backgrounds on every view attach
+     * (including recycled views), without wrapping the adapter.
      */
     protected fun setupCardBackgrounds() {
-        computeCardBackgrounds()
-        listView.setOnScrollChangeListener(OnScrollChangeListener { _, _, _, _, _ ->
-            applyVisibleCardBackgrounds()
-        })
-        listView.post { applyVisibleCardBackgrounds() }
-    }
-
-    private fun computeCardBackgrounds() {
         val screen = preferenceScreen ?: return
+        computeCardBackgrounds(screen)
+        if (cardBackgroundMap.isEmpty()) return
 
-        data class CategoryRange(val first: Int, val last: Int)
-        val categoryRanges = mutableMapOf<String, CategoryRange>()
-        var adapterPos = 0
-
-        for (i in 0 until screen.preferenceCount) {
-            val pref = screen.getPreference(i)
-            if (pref is PreferenceCategory) {
-                val catKey = pref.key ?: "cat_$i"
-                val children = mutableListOf<Int>()
-                collectChildPositions(pref, adapterPos + 1, children)
-                if (children.isNotEmpty()) {
-                    categoryRanges[catKey] = CategoryRange(children.first(), children.last())
-                }
-                adapterPos++
-                adapterPos += children.size
-            } else {
-                adapterPos++
-            }
-        }
-
-        // Handle top-level items (not in any category) as a single card group
-        val topLevelPositions = mutableListOf<Int>()
-        adapterPos = 0
-        for (i in 0 until screen.preferenceCount) {
-            val pref = screen.getPreference(i)
-            if (pref is PreferenceCategory) {
-                adapterPos++
-                adapterPos += countChildren(pref)
-            } else {
-                topLevelPositions.add(adapterPos)
-                adapterPos++
-            }
-        }
-        if (topLevelPositions.isNotEmpty()) {
-            categoryRanges["__topLevel__"] = CategoryRange(
-                topLevelPositions.first(),
-                topLevelPositions.last()
-            )
-        }
-
-        // Build position -> drawable map
-        cardBackgroundMap.clear()
-        val res = resources
-        for ((_, range) in categoryRanges) {
-            if (range.first == range.last) {
-                cardBackgroundMap[range.first] =
-                    res.getDrawable(R.drawable.bg_card_single, null)
-            } else {
-                for (pos in range.first..range.last) {
-                    cardBackgroundMap[pos] = when (pos) {
-                        range.first -> res.getDrawable(R.drawable.bg_card_top, null)
-                        range.last -> res.getDrawable(R.drawable.bg_card_bottom, null)
-                        else -> res.getDrawable(R.drawable.bg_card_middle, null)
+        listView.addOnChildAttachStateChangeListener(
+            object : androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(child: View) {
+                    val pos = listView.getChildAdapterPosition(child)
+                    if (pos >= 0) {
+                        cardBackgroundMap[pos]?.let { child.background = it }
                     }
                 }
+                override fun onChildViewDetachedFromWindow(child: View) {}
+            }
+        )
+        // Apply to already-visible children
+        for (i in 0 until listView.childCount) {
+            val child = listView.getChildAt(i)
+            val pos = listView.getChildAdapterPosition(child)
+            if (pos >= 0) {
+                cardBackgroundMap[pos]?.let { child.background = it }
             }
         }
     }
 
-    private fun applyVisibleCardBackgrounds() {
-        val rv = listView
-        val lm = rv.layoutManager as? LinearLayoutManager ?: return
-        val first = lm.findFirstVisibleItemPosition()
-        val last = lm.findLastVisibleItemPosition()
-        if (first < 0 || last < 0) return
-        for (pos in first..last) {
-            val view = rv.getChildAt(pos - first) ?: continue
-            cardBackgroundMap[pos]?.let { view.background = it }
+    private fun computeCardBackgrounds(screen: PreferenceGroup) {
+        data class Range(val first: Int, val last: Int)
+        val ranges = mutableListOf<Range>()
+        var pos = 0
+
+        for (i in 0 until screen.preferenceCount) {
+            val pref = screen.getPreference(i)
+            if (pref is PreferenceCategory) {
+                pos++
+                val children = collectChildPositions(pref, pos)
+                if (children.isNotEmpty()) {
+                    ranges.add(Range(children.first(), children.last()))
+                }
+                pos += countAll(pref)
+            } else {
+                pos++
+            }
+        }
+
+        // Top-level items (not in any category)
+        val topLevel = mutableListOf<Int>()
+        pos = 0
+        for (i in 0 until screen.preferenceCount) {
+            val pref = screen.getPreference(i)
+            if (pref is PreferenceCategory) {
+                pos++
+                pos += countAll(pref)
+            } else {
+                topLevel.add(pos)
+                pos++
+            }
+        }
+        if (topLevel.isNotEmpty()) {
+            ranges.add(Range(topLevel.first(), topLevel.last()))
+        }
+
+        // Use actual theme card background color (responds to Theme Settings)
+        val cardColor = requireContext().cardBackground
+        val corner = 12f.dpToPx()
+
+        cardBackgroundMap.clear()
+        for (range in ranges) {
+            if (range.first == range.last) {
+                cardBackgroundMap[range.first] = makeCardBg(cardColor, corner, corner, corner, corner)
+            } else {
+                cardBackgroundMap[range.first] = makeCardBg(cardColor, corner, corner, 0f, 0f)
+                for (p in (range.first + 1) until range.last) {
+                    cardBackgroundMap[p] = makeCardBg(cardColor, 0f, 0f, 0f, 0f)
+                }
+                cardBackgroundMap[range.last] = makeCardBg(cardColor, 0f, 0f, corner, corner)
+            }
         }
     }
 
-    private fun collectChildPositions(
-        group: PreferenceGroup,
-        startPos: Int,
-        positions: MutableList<Int>
-    ) {
+    private fun makeCardBg(
+        @androidx.annotation.ColorInt color: Int,
+        topLeft: Float, topRight: Float,
+        bottomLeft: Float, bottomRight: Float
+    ): StateListDrawable {
+        val pressed = GradientDrawable().apply {
+            setColor(ContextCompat.getColor(requireContext(), R.color.btn_bg_press))
+            cornerRadii = floatArrayOf(
+                topLeft, topLeft, topRight, topRight,
+                bottomLeft, bottomLeft, bottomRight, bottomRight
+            )
+        }
+        val normal = GradientDrawable().apply {
+            setColor(color)
+            cornerRadii = floatArrayOf(
+                topLeft, topLeft, topRight, topRight,
+                bottomLeft, bottomLeft, bottomRight, bottomRight
+            )
+        }
+        return StateListDrawable().apply {
+            addState(intArrayOf(android.R.attr.state_pressed), pressed)
+            addState(intArrayOf(android.R.attr.state_focused), pressed)
+            addState(intArrayOf(), normal)
+        }
+    }
+
+    private fun collectChildPositions(group: PreferenceGroup, startPos: Int): List<Int> {
+        val result = mutableListOf<Int>()
         var pos = startPos
         for (i in 0 until group.preferenceCount) {
             val pref = group.getPreference(i)
             if (pref is PreferenceCategory) {
                 pos++
-                collectChildPositions(pref, pos, positions)
-                pos += countChildren(pref)
+                result.addAll(collectChildPositions(pref, pos))
+                pos += countAll(pref)
             } else {
-                positions.add(pos)
+                result.add(pos)
                 pos++
             }
         }
+        return result
     }
 
-    private fun countChildren(group: PreferenceGroup): Int {
+    private fun countAll(group: PreferenceGroup): Int {
         var count = 0
         for (i in 0 until group.preferenceCount) {
             val pref = group.getPreference(i)
             if (pref is PreferenceCategory) {
                 count++
-                count += countChildren(pref)
+                count += countAll(pref)
             } else {
                 count++
             }

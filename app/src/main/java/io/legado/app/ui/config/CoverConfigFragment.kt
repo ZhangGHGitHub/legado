@@ -51,13 +51,13 @@ class CoverConfigFragment : PreferenceFragment(),
             ?.isEnabled = getPrefBoolean(PreferKey.coverShowName)
         findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
             ?.isEnabled = getPrefBoolean(PreferKey.coverShowNameN)
-        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.cover_config)
         listView.setEdgeEffectColor(primaryColor)
+        listView.post { setupCardBackgrounds() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

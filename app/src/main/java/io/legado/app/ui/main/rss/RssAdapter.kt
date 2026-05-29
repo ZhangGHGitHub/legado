@@ -14,6 +14,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ItemRssBinding
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
+import io.legado.app.lib.theme.cardBackground
 import splitties.views.onLongClick
 
 class RssAdapter(
@@ -34,6 +35,8 @@ class RssAdapter(
         payloads: MutableList<Any>
     ) {
         binding.apply {
+            (root as? com.google.android.material.card.MaterialCardView)
+                ?.setCardBackgroundColor(context.cardBackground)
             tvName.text = item.sourceName
             val options = RequestOptions()
                 .set(OkHttpModelLoader.sourceOriginOption, item.sourceUrl)

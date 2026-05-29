@@ -66,13 +66,13 @@ class WelcomeConfigFragment : PreferenceFragment(),
 //        findPreference<SwitchPreference>(PreferKey.welcomeShowIconDark)?.let {
 //            it.isEnabled = !welcomeImageDark.isNullOrEmpty()
 //        }
-        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.welcome_style)
         listView.setEdgeEffectColor(primaryColor)
+        listView.post { setupCardBackgrounds() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

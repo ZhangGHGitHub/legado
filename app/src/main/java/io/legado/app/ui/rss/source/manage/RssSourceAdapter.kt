@@ -1,10 +1,13 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.StateListDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,10 +16,10 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ItemRssSourceBinding
-import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.cardBackground
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import io.legado.app.utils.ColorUtils
+
 import java.util.Collections
 
 
@@ -74,7 +77,19 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
     ) {
         binding.run {
             if (payloads.isEmpty()) {
-                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
+                val corner = 12f * context.resources.displayMetrics.density
+                val normal = GradientDrawable().apply {
+                    setColor(context.cardBackground)
+                    cornerRadius = corner
+                }
+                val pressed = GradientDrawable().apply {
+                    setColor(ContextCompat.getColor(context, R.color.btn_bg_press))
+                    cornerRadius = corner
+                }
+                root.background = StateListDrawable().apply {
+                    addState(intArrayOf(android.R.attr.state_pressed), pressed)
+                    addState(intArrayOf(), normal)
+                }
                 cbSource.text = item.getDisplayNameGroup()
                 swtEnabled.isChecked = item.enabled
                 cbSource.isChecked = selected.contains(item)

@@ -342,6 +342,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override fun onResume() {
         super.onResume()
         adapter.upResumed(true)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onPause() {

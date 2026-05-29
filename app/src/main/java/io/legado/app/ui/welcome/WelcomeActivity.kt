@@ -95,7 +95,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
                 }
             }
         }
-        super.upBackgroundImage()
+        // 启动页不显示通用背景图/背景色，仅显示主题设置中的启动页专属背景
     }
 
     private fun startMainActivity() {

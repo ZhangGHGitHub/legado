@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf.style1.books
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import io.legado.app.databinding.ItemBookshelfList2Binding
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.ReadIterationHelper
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.theme.cardBackground
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.toTimeAgo
@@ -38,6 +40,11 @@ class BooksAdapterList2(
         payloads: MutableList<Any>
     ) = binding.run {
         if (payloads.isEmpty()) {
+            val corner = 8f * root.resources.displayMetrics.density
+            root.background = GradientDrawable().apply {
+                setColor(context.cardBackground)
+                this.cornerRadius = corner
+            }
             tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle

@@ -80,7 +80,6 @@ class OtherConfigFragment : PreferenceFragment(),
         onlyUpdateReadPref = findPreference<Preference>(PreferKey.onlyUpdateRead)?.also {
             it.isVisible = AppConfig.autoRefreshBook
         }
-        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,6 +87,7 @@ class OtherConfigFragment : PreferenceFragment(),
         activity?.setTitle(R.string.other_setting)
         preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         listView.setEdgeEffectColor(primaryColor)
+        listView.post { setupCardBackgrounds() }
     }
 
     override fun onDestroy() {

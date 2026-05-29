@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background"
     tools:context="io.legado.app.ui.about.AboutActivity">
 
     <io.legado.app.ui.widget.TitleBar

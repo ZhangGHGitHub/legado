@@ -44,12 +44,12 @@ class AboutFragment : PreferenceFragment() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.about)
-        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listView.overScrollMode = View.OVER_SCROLL_NEVER
+        listView.post { setupCardBackgrounds() }
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {

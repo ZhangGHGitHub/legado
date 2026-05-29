@@ -106,7 +106,6 @@ class ThemeConfigFragment : PreferenceFragment(),
                 }
             }
         }
-        setupCardBackgrounds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -114,6 +113,7 @@ class ThemeConfigFragment : PreferenceFragment(),
         activity?.setTitle(R.string.theme_setting)
         listView.setEdgeEffectColor(primaryColor)
         activity?.addMenuProvider(this, viewLifecycleOwner)
+        listView.post { setupCardBackgrounds() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
+import android.view.View.OnScrollChangeListener
 import androidx.fragment.app.DialogFragment
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -13,7 +13,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.lib.prefs.EditTextPreferenceDialog
 import io.legado.app.lib.prefs.ListPreferenceDialog
@@ -24,12 +24,6 @@ import io.legado.app.utils.dpToPx
 abstract class PreferenceFragment : PreferenceFragmentCompat() {
 
     private val dialogFragmentTag = "androidx.preference.PreferenceFragment.DIALOG"
-
-    /**
-     * Cache of adapter position -> card background drawable.
-     * Built once when preferences are loaded, used by the adapter wrapper
-     * to apply card backgrounds on every view bind (including recycled views).
-     */
     private val cardBackgroundMap = mutableMapOf<Int, Drawable>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,12 +39,15 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     /**
-     * Call this after addPreferencesFromResource() to compute card backgrounds
-     * and wrap the adapter for automatic application on every bind.
+     * Call after addPreferencesFromResource() to compute card backgrounds
+     * and apply them via a scroll listener (reapplies on every scroll settle).
      */
     protected fun setupCardBackgrounds() {
         computeCardBackgrounds()
-        wrapAdapterWithCardBackgrounds()
+        listView.setOnScrollChangeListener(OnScrollChangeListener { _, _, _, _, _ ->
+            applyVisibleCardBackgrounds()
+        })
+        listView.post { applyVisibleCardBackgrounds() }
     }
 
     private fun computeCardBackgrounds() {
@@ -96,7 +93,7 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
             )
         }
 
-        // Build the position -> drawable map
+        // Build position -> drawable map
         cardBackgroundMap.clear()
         val res = resources
         for ((_, range) in categoryRanges) {
@@ -115,57 +112,16 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun wrapAdapterWithCardBackgrounds() {
-        val recyclerView = listView
-        val originalAdapter = recyclerView.adapter ?: return
-        recyclerView.adapter = CardBackgroundAdapterWrapper(originalAdapter, cardBackgroundMap)
-    }
-
-    private class CardBackgroundAdapterWrapper(
-        private val delegate: RecyclerView.Adapter<RecyclerView.ViewHolder>,
-        private val backgroundMap: Map<Int, Drawable>
-    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        init {
-            delegate.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                override fun onChanged() = notifyDataSetChanged()
-                override fun onItemRangeChanged(positionStart: Int, itemCount: Int) =
-                    notifyItemRangeChanged(positionStart, itemCount)
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) =
-                    notifyItemRangeInserted(positionStart, itemCount)
-                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) =
-                    notifyItemRangeRemoved(positionStart, itemCount)
-                override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) =
-                    notifyItemMoved(fromPosition, toPosition)
-            })
+    private fun applyVisibleCardBackgrounds() {
+        val rv = listView
+        val lm = rv.layoutManager as? LinearLayoutManager ?: return
+        val first = lm.findFirstVisibleItemPosition()
+        val last = lm.findLastVisibleItemPosition()
+        if (first < 0 || last < 0) return
+        for (pos in first..last) {
+            val view = rv.getChildAt(pos - first) ?: continue
+            cardBackgroundMap[pos]?.let { view.background = it }
         }
-
-        override fun getItemCount(): Int = delegate.itemCount
-
-        override fun getItemViewType(position: Int): Int = delegate.getItemViewType(position)
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return delegate.onCreateViewHolder(parent, viewType)
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            delegate.onBindViewHolder(holder, position)
-            backgroundMap[position]?.let { bg ->
-                holder.itemView.background = bg
-            }
-        }
-
-        override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-            super.onViewRecycled(holder)
-            delegate.onViewRecycled(holder)
-        }
-
-        override fun setHasStableIds(hasStableIds: Boolean) {
-            super.setHasStableIds(hasStableIds)
-            delegate.setHasStableIds(hasStableIds)
-        }
-
-        override fun getItemId(position: Int): Long = delegate.getItemId(position)
     }
 
     private fun collectChildPositions(

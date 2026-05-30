@@ -1836,6 +1836,109 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
+    override fun showEditContentDialog() {
+        showDialogFragment(ContentEditDialog())
+    }
+
+    override fun showClickActionConfig() {
+        showClickRegionalConfig()
+    }
+
+    override fun showSyncProgressDialog() {
+        ReadBook.book?.let {
+            viewModel.syncBookProgress(it) { progress ->
+                sureSyncProgress(progress)
+            }
+        }
+    }
+
+    override fun showCoverProgressDialog() {
+        ReadBook.book?.let {
+            ReadBook.uploadProgress(true) { toastOnUi(R.string.upload_book_success) }
+        }
+    }
+
+    override fun showPageAnimDialog() {
+        showPageAnimConfig {
+            binding.readView.upPageAnim()
+            ReadBook.loadContent(false)
+        }
+    }
+
+    override fun showLog() {
+        showDialogFragment<AppLogDialog>()
+    }
+
+    override fun showUpdateToc() {
+        ReadBook.book?.let {
+            if (it.isEpub) {
+                BookHelp.clearCache(it)
+                EpubFile.clear()
+            }
+            if (it.isMobi) {
+                MobiFile.clear()
+            }
+            loadChapterList(it)
+        }
+    }
+
+    override fun showEnableReplace() {
+        changeReplaceRuleState()
+    }
+
+    override fun showSameTitleRemoved() {
+        ReadBook.book?.let {
+            val contentProcessor = ContentProcessor.get(it)
+            val textChapter = ReadBook.curTextChapter
+            if (textChapter != null
+                && !textChapter.sameTitleRemoved
+                && !contentProcessor.removeSameTitleCache.contains(
+                    textChapter.chapter.getFileName("nr")
+                )
+            ) {
+                toastOnUi("未找到可移除的重复标题")
+            }
+        }
+        viewModel.reverseRemoveSameTitle()
+    }
+
+    override fun showReSegment() {
+        ReadBook.book?.let {
+            it.setReSegment(!it.getReSegment())
+            ReadBook.loadContent(false)
+        }
+    }
+
+    override fun showReverseContent() {
+        ReadBook.book?.let {
+            viewModel.reverseContent(it)
+        }
+    }
+
+    override fun showImageStyle() {
+        val imgStyles =
+            arrayListOf(
+                Book.imgStyleDefault, Book.imgStyleFull, Book.imgStyleText,
+                Book.imgStyleSingle
+            )
+        selector(
+            R.string.image_style,
+            imgStyles
+        ) { _, index ->
+            val imageStyle = imgStyles[index]
+            ReadBook.book?.setImageStyle(imageStyle)
+            if (imageStyle == Book.imgStyleSingle) {
+                ReadBook.book?.setPageAnim(0)
+                binding.readView.upPageAnim()
+            }
+            ReadBook.loadContent(false)
+        }
+    }
+
+    override fun showEffectiveReplaces() {
+        showDialogFragment<EffectiveReplacesDialog>()
+    }
+
     override fun changeReplaceRuleState() {
         ReadBook.book?.let {
             it.setUseReplaceRule(!it.getUseReplaceRule())

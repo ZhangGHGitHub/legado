@@ -15,12 +15,14 @@
             android:id="@+id/menu_refresh"
             android:icon="@drawable/ic_refresh_black_24dp"
             android:title="@string/refresh"
+            android:visible="false"
             app:showAsAction="always" />
 
         <item
             android:id="@+id/menu_download"
             android:icon="@drawable/ic_download_line"
             android:title="@string/offline_cache"
+            android:visible="false"
             app:showAsAction="always" />
 
     </group>
@@ -40,6 +42,7 @@
             android:id="@+id/menu_set_charset"
             android:icon="@drawable/ic_translate"
             android:title="@string/set_charset"
+            android:visible="false"
             app:showAsAction="always" />
 
     </group>
@@ -47,16 +50,7 @@
     <item
         android:id="@+id/menu_add_bookmark"
         android:title="@string/bookmark_add"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_edit_content"
-        android:title="@string/edit_content"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_page_anim"
-        android:title="@string/book_page_anim"
+        android:visible="false"
         app:showAsAction="never" />
 
     <item
@@ -72,13 +66,28 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_reverse_content"
-        android:title="@string/reverse_content"
+        android:id="@+id/menu_update_toc"
+        android:title="@string/update_toc"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_edit_content"
+        android:title="@string/edit_content"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_simulated_reading"
         android:title="@string/simulated_reading"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_page_anim"
+        android:title="@string/book_page_anim"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_click_action"
+        android:title="@string/click_regional_config"
         app:showAsAction="never" />
 
     <item
@@ -102,11 +111,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_enable_review"
-        android:checkable="true"
-        android:checked="false"
-        android:title="@string/review"
-        android:visible="false"
+        android:id="@+id/menu_reverse_content"
+        android:title="@string/reverse_content"
         app:showAsAction="never" />
 
     <group android:id="@+id/menu_group_epub">
@@ -116,6 +122,7 @@
             android:checkable="true"
             android:checked="false"
             android:title="@string/del_ruby_tag"
+            android:visible="false"
             app:showAsAction="never" />
 
         <item
@@ -123,6 +130,7 @@
             android:checkable="true"
             android:checked="false"
             android:title="@string/del_h_tag"
+            android:visible="false"
             app:showAsAction="never" />
 
     </group>
@@ -130,11 +138,6 @@
     <item
         android:id="@+id/menu_image_style"
         android:title="@string/image_style"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_update_toc"
-        android:title="@string/update_toc"
         app:showAsAction="never" />
 
     <item

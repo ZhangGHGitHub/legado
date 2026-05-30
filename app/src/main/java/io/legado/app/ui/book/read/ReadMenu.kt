@@ -18,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
+import io.legado.app.ui.book.read.BaseReadBookActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ViewReadMenuBinding
@@ -420,16 +421,33 @@ class ReadMenu @JvmOverloads constructor(
             PopupMenu(context, ivMore).apply {
                 inflate(R.menu.book_read)
                 applyRoundedBackground(ivMore)
+                // 刷新/下载/书签已在工具栏或后续迁移，从弹窗中隐藏
+                menu.findItem(R.id.menu_refresh)?.isVisible = false
+                menu.findItem(R.id.menu_download)?.isVisible = false
+                menu.findItem(R.id.menu_add_bookmark)?.isVisible = false
+                // 控制拉取/覆盖云端进度的可见性
+                menu.findItem(R.id.menu_get_progress)?.isVisible = ReadBook.inBookshelf
+                menu.findItem(R.id.menu_cover_progress)?.isVisible = ReadBook.inBookshelf
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.menu_change_source -> {
                             runMenuOut { callBack.openChangeSource() }
                         }
-                        R.id.menu_refresh -> callBack.upBookView()
-                        R.id.menu_download -> callBack.startDownload()
-                        R.id.menu_add_bookmark -> callBack.addBookmark()
+                        R.id.menu_get_progress -> callBack.showSyncProgressDialog()
+                        R.id.menu_cover_progress -> callBack.showCoverProgressDialog()
+                        R.id.menu_update_toc -> callBack.showUpdateToc()
+                        R.id.menu_edit_content -> callBack.showEditContentDialog()
+                        R.id.menu_simulated_reading -> (callBack as? BaseReadBookActivity)?.showSimulatedReading()
                         R.id.menu_page_anim -> callBack.showPageAnimDialog()
+                        R.id.menu_click_action -> callBack.showClickActionConfig()
+                        R.id.menu_enable_replace -> callBack.showEnableReplace()
+                        R.id.menu_same_title_removed -> callBack.showSameTitleRemoved()
+                        R.id.menu_re_segment -> callBack.showReSegment()
+                        R.id.menu_reverse_content -> callBack.showReverseContent()
+                        R.id.menu_image_style -> callBack.showImageStyle()
+                        R.id.menu_effective_replaces -> callBack.showEffectiveReplaces()
                         R.id.menu_log -> callBack.showLog()
+                        R.id.menu_help -> callBack.showHelp()
                     }
                     true
                 }
@@ -503,6 +521,10 @@ class ReadMenu @JvmOverloads constructor(
                 )
             }
             true
+        }
+        // 书签
+        ivBookmark.setOnClickListener {
+            callBack.addBookmark()
         }
         //书源操作
         tvSourceAction.onClick {
@@ -741,6 +763,17 @@ class ReadMenu @JvmOverloads constructor(
         fun splitLongChapter(enable: Boolean) {}
         fun clearCache() {}
         fun showLog() {}
+        fun showEditContentDialog() {}
+        fun showClickActionConfig() {}
+        fun showSyncProgressDialog() {}
+        fun showCoverProgressDialog() {}
+        fun showUpdateToc() {}
+        fun showEnableReplace() {}
+        fun showSameTitleRemoved() {}
+        fun showReSegment() {}
+        fun showReverseContent() {}
+        fun showImageStyle() {}
+        fun showEffectiveReplaces() {}
         fun onClickRefresh() {}
         fun onClickDownload() {}
         fun onClickBack() {}

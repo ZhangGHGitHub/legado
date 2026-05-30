@@ -88,11 +88,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="28dp"
                     android:gravity="center"
-                    android:maxWidth="100dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
+                    android:maxWidth="72dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
                     android:text="@string/book_source"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     app:radius="14dp" />
 
                 <ImageView
@@ -136,40 +136,61 @@
 
             </LinearLayout>
 
-            <!-- 第二行：章节名 + 章节URL -->
+            <!-- 第二行：章节名 + 章节URL + 书签 -->
             <LinearLayout
                 android:id="@+id/title_bar_addition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="center_vertical"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp">
 
-                <TextView
-                    android:id="@+id/tv_chapter_name"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:includeFontPadding="false"
-                    android:singleLine="true"
-                    android:textSize="13sp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:text="章节名" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_chapter_url"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:includeFontPadding="false"
-                    android:singleLine="true"
-                    android:textSize="11sp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:text="http" />
+                    <TextView
+                        android:id="@+id/tv_chapter_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        tools:text="章节名" />
+
+                    <TextView
+                        android:id="@+id/tv_chapter_url"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        tools:text="http" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_bookmark"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_bookmark"
+                    app:tint="@color/primaryText"
+                    android:contentDescription="@string/bookmark_add"
+                    tools:ignore="ImageContrastCheck" />
 
             </LinearLayout>
 

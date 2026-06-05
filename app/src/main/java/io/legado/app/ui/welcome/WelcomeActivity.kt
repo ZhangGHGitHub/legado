@@ -2,6 +2,7 @@ package io.legado.app.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.postDelayed
 import io.legado.app.base.BaseActivity
@@ -54,46 +55,39 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     override fun upBackgroundImage() {
         if (getPrefBoolean(PreferKey.customWelcome)) {
-            kotlin.runCatching {
-                when (ThemeConfig.getTheme()) {
-                    Theme.Dark -> {
-                        getPrefString(PreferKey.welcomeImageDark)?.let { path ->
-                            if (path.endsWith(".9.png")) {
-                                BitmapUtils.decodeNinePatchDrawable(path)?.let {
-                                    window.decorView.background = it
-                                }
-                            } else {
-                                val size = windowManager.windowSize
-                                BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels)?.let {
-                                    window.decorView.background = it.toDrawable(resources)
-                                }
-                            }
-                        }
-                        binding.tvLegado.visible(AppConfig.welcomeShowTextDark)
-                        binding.ivBook.visible(AppConfig.welcomeShowIconDark)
-                        binding.tvGzh.visible(AppConfig.welcomeShowTextDark)
-                        return
+            val contentView = findViewById<View>(android.R.id.content)
+            // 清除 contentView 上的背景色，使自定义背景图可见
+            contentView.background = null
+            val isDark = ThemeConfig.isDarkTheme()
+            val imagePath = if (isDark) {
+                getPrefString(PreferKey.welcomeImageDark)
+            } else {
+                getPrefString(PreferKey.welcomeImage)
+            }
+            imagePath?.let { path ->
+                kotlin.runCatching {
+                    val drawable = if (path.endsWith(".9.png")) {
+                        BitmapUtils.decodeNinePatchDrawable(path)
+                    } else {
+                        val size = windowManager.windowSize
+                        BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels)
+                            ?.toDrawable(resources)
                     }
-                    else -> {
-                        getPrefString(PreferKey.welcomeImage)?.let { path ->
-                            if (path.endsWith(".9.png")) {
-                                BitmapUtils.decodeNinePatchDrawable(path)?.let {
-                                    window.decorView.background = it
-                                }
-                            } else {
-                                val size = windowManager.windowSize
-                                BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels)?.let {
-                                    window.decorView.background = it.toDrawable(resources)
-                                }
-                            }
-                        }
-                        binding.tvLegado.visible(AppConfig.welcomeShowText)
-                        binding.ivBook.visible(AppConfig.welcomeShowIcon)
-                        binding.tvGzh.visible(AppConfig.welcomeShowText)
-                        return
-                    }
+                    drawable?.let { window.decorView.background = it }
+                }.onFailure {
+                    android.util.Log.e("WelcomeActivity", "加载启动页背景图失败: $path", it)
                 }
             }
+            if (isDark) {
+                binding.tvLegado.visible(AppConfig.welcomeShowTextDark)
+                binding.ivBook.visible(AppConfig.welcomeShowIconDark)
+                binding.tvGzh.visible(AppConfig.welcomeShowTextDark)
+            } else {
+                binding.tvLegado.visible(AppConfig.welcomeShowText)
+                binding.ivBook.visible(AppConfig.welcomeShowIcon)
+                binding.tvGzh.visible(AppConfig.welcomeShowText)
+            }
+            return
         }
         // 启动页不显示通用背景图/背景色，仅显示主题设置中的启动页专属背景
     }

@@ -19,6 +19,8 @@
 | 阅读页二级弹窗统一 | `pure-sniffing-papert.md`（第一部分） | 自动翻页/朗读/界面/设置弹窗改为 MD3 MaterialCardView 卡片 |
 | 写想法弹窗重设计 | `pure-sniffing-papert.md`（第二部分） | 底部弹窗风格，含拖拽条、标题、输入区、下划线样式按钮 |
 | 想法下划线样式自定义 | `pure-sniffing-papert.md`（第三部分） | 支持实线/虚线/点线、粗细调节、颜色取色器、每条笔记独立保存 |
+| MD3 主题切换 | `material_design_migration_plan.md` Phase 1 | Base.AppTheme 已迁移到 Theme.MaterialComponents.DayNight.NoActionBar.Bridge |
+| MD3 CardView 迁移 | `material_design_migration_plan.md` Phase 3d | 全部 44 处已替换为 MaterialCardView，0 处遗留 |
 | AI 工具：get_book_content | `legado_new_tools_guide.md` | ToolRouter 中已实现 |
 | AI 工具：search_online_book | `legado_new_tools_guide.md` | ToolRouter 中已实现 |
 | AI 工具：save_book_progress | `legado_new_tools_guide.md` | ToolRouter 中已实现 |
@@ -35,11 +37,10 @@
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | Phase 2 | 自定义 View 迁移（16个 AppCompat 基类替换为 Material/标准基类） | ❌ 未开始 |
-| Phase 3a | TextInputLayout 替换为 Material 版本（148处） | ❌ 未开始 |
-| Phase 3b | Toolbar → MaterialToolbar（31处） | ❌ 未开始 |
-| Phase 3c | AppCompatImageView → ImageView（73处） | ❌ 未开始 |
-| Phase 3d | CardView → MaterialCardView（~26处） | ❌ 未开始 |
-| Phase 3e | AppCompatSpinner 自动升级确认 | ❌ 未开始 |
+| Phase 3a | 自定义 TextInputLayout → Material TextInputLayout（152处） | ❌ 未开始 |
+| Phase 3b | AppCompat Toolbar → MaterialToolbar（30处） | ❌ 未开始 |
+| Phase 3c | AppCompatImageView → ImageView（77处） | ❌ 未开始 |
+| Phase 3e | AppCompatSpinner 自动升级确认 | ❌ 待确认 |
 | Phase 4 | 样式细节调优（色彩系统、组件样式统一、ripple、Shape theming） | ❌ 未开始 |
 | Phase 5 | 进阶优化（Material3、Dynamic Color、Material Motion、BottomSheet） | ❌ 未开始 |
 

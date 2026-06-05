@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp"
-            android:text="下划线样式"
+            android:text="@string/thought_underline_style"
             android:textColor="@color/primaryText"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="样式"
+            android:text="@string/thought_underline_style"
             android:textColor="@color/primaryText"
             android:textSize="13sp"
             android:alpha="0.7" />
@@ -53,7 +53,7 @@
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="默认"
+                android:text="@string/default_value"
                 android:checked="true" />
 
             <com.google.android.material.chip.Chip
@@ -61,28 +61,28 @@
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="实线" />
+                android:text="@string/underline_style_solid" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_dashed"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="虚线" />
+                android:text="@string/underline_style_dashed" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_wave"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="曲线" />
+                android:text="@string/underline_style_wave" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_dotted"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="点线" />
+                android:text="@string/underline_style_dotted" />
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:paddingBottom="4dp"
-            android:text="粗度"
+            android:text="@string/underline_weight"
             android:textColor="@color/primaryText"
             android:textSize="13sp"
             android:alpha="0.7" />
@@ -134,7 +134,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="颜色"
+                android:text="@string/underline_color"
                 android:textColor="@color/primaryText"
                 android:textSize="13sp"
                 android:alpha="0.7" />
@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
-                android:text="跟随强调色"
+                android:text="@string/underline_follow_accent"
                 android:textColor="@color/accent"
                 android:textSize="12sp" />
 
@@ -157,7 +157,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:paddingBottom="4dp"
-            android:text="预览"
+            android:text="Preview"
             android:textColor="@color/primaryText"
             android:textSize="13sp"
             android:alpha="0.7" />
@@ -181,7 +181,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
-                android:text="取消"
+                android:text="@string/cancel"
                 android:textColor="@color/primaryText" />
 
             <TextView
@@ -189,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
-                android:text="确认"
+                android:text="@string/ok"
                 android:textColor="@color/accent" />
 
         </LinearLayout>

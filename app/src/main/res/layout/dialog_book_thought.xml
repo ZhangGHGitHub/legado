@@ -102,7 +102,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
-                    android:text="下划线样式"
+                    android:text="@string/thought_underline_style"
                     android:textColor="@color/accent"
                     android:textSize="13sp" />
 

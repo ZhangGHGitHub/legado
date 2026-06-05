@@ -105,10 +105,10 @@ class ThoughtUnderlineStyleDialog(
                 else -> ""
             }
             tvColorValue.text = when (selectedColor) {
-                "" -> "跟随强调色"
-                "#FF0000" -> "红色"
-                "#0000FF" -> "蓝色"
-                "#00FF00" -> "绿色"
+                "" -> getString(R.string.underline_follow_accent)
+                "#FF0000" -> "Red"
+                "#0000FF" -> "Blue"
+                "#00FF00" -> "Green"
                 else -> selectedColor
             }
             updatePreview()

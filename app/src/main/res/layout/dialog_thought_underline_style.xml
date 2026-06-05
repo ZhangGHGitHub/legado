@@ -76,13 +76,6 @@
                 android:text="@string/underline_style_dashed" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_wave"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/underline_style_wave" />
-
-            <com.google.android.material.chip.Chip
                 android:id="@+id/chip_dotted"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"

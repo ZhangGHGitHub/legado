@@ -266,25 +266,7 @@ data class TextLine(
 
         fun flushSegment() {
             if (start >= 0f && currentPaint != null) {
-                val style = currentStyle
-                if (style?.style == 3) {
-                    // 曲线：用Path画正弦波，固定4dp振幅
-                    val path = android.graphics.Path()
-                    val amplitude = 4f.dpToPx()
-                    val segWidth = end - start
-                    path.moveTo(start, lineY)
-                    var x = start
-                    while (x < end) {
-                        val progress = (x - start) / segWidth
-                        val y = lineY + (amplitude * Math.sin(progress * Math.PI * 8)).toFloat()
-                        path.lineTo(x, y)
-                        x += 1f
-                    }
-                    path.lineTo(end, lineY)
-                    canvas.drawPath(path, currentPaint!!)
-                } else {
-                    canvas.drawLine(start, lineY, end, lineY, currentPaint!!)
-                }
+                canvas.drawLine(start, lineY, end, lineY, currentPaint!!)
             }
             start = -1f
             end = -1f
@@ -314,9 +296,6 @@ data class TextLine(
                 }
                 2 -> { // 虚线
                     paint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
-                }
-                3 -> { // 曲线(用虚线模拟波浪)
-                    paint.pathEffect = DashPathEffect(floatArrayOf(6f, 6f), 0f)
                 }
                 4 -> { // 点线
                     paint.pathEffect = DashPathEffect(floatArrayOf(2f, 8f), 0f)

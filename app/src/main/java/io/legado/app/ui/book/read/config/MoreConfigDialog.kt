@@ -75,7 +75,7 @@ class MoreConfigDialog : BasePrefDialogFragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         ))
         container?.addView(cardView)
-        return cardView
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

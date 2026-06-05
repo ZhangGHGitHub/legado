@@ -37,6 +37,10 @@ class ThoughtUnderlineStyleDialog(
     companion object {
         const val COLOR_DIALOG_ID = 1001
 
+        /** 静态持有者：让 Activity 的 onColorSelected 能直接调到当前 dialog */
+        @Volatile
+        var pendingDialog: ThoughtUnderlineStyleDialog? = null
+
         /** 从 AppConfig 读取上次使用的样式 */
         fun lastUsedStyle(): TextLine.ThoughtUnderlineStyle {
             return TextLine.ThoughtUnderlineStyle(
@@ -66,6 +70,16 @@ class ThoughtUnderlineStyleDialog(
             attributes = attr
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        pendingDialog = this
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pendingDialog = null
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -106,7 +120,6 @@ class ThoughtUnderlineStyleDialog(
         chipGroupStyle.check(when (selectedStyle) {
             1 -> R.id.chip_solid
             2 -> R.id.chip_dashed
-            3 -> R.id.chip_wave
             4 -> R.id.chip_dotted
             else -> R.id.chip_default
         })
@@ -114,7 +127,6 @@ class ThoughtUnderlineStyleDialog(
             selectedStyle = when (checkedIds.firstOrNull()) {
                 R.id.chip_solid -> 1
                 R.id.chip_dashed -> 2
-                R.id.chip_wave -> 3
                 R.id.chip_dotted -> 4
                 else -> 0
             }
@@ -184,40 +196,18 @@ class ThoughtUnderlineStyleDialog(
             val lineY = h * 0.7f
             val color = getColor()
             val strokeWidthPx = selectedWeight.dpToPx()
-            when (selectedStyle) {
-                3 -> {
-                    // 曲线：固定4dp振幅的正弦波
-                    val path = Path()
-                    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                        this.color = color
-                        strokeWidth = strokeWidthPx
-                        style = Paint.Style.STROKE
-                    }
-                    val amplitude = 4.dpToPx()
-                    path.moveTo(0f, lineY)
-                    var x = 0f
-                    while (x < w) {
-                        val y = lineY + (amplitude * Math.sin(x / 8.0)).toFloat()
-                        path.lineTo(x, y)
-                        x += 1f
-                    }
-                    canvas.drawPath(path, paint)
-                }
-                else -> {
-                    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                        this.color = color
-                        strokeWidth = strokeWidthPx
-                        style = Paint.Style.STROKE
-                    }
-                    when (selectedStyle) {
-                        1 -> paint.pathEffect = null
-                        2 -> paint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
-                        4 -> paint.pathEffect = DashPathEffect(floatArrayOf(2f, 8f), 0f)
-                        else -> paint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
-                    }
-                    canvas.drawLine(0f, lineY, w, lineY, paint)
-                }
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                this.color = color
+                strokeWidth = strokeWidthPx
+                style = Paint.Style.STROKE
             }
+            when (selectedStyle) {
+                1 -> paint.pathEffect = null
+                2 -> paint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
+                4 -> paint.pathEffect = DashPathEffect(floatArrayOf(2f, 8f), 0f)
+                else -> paint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
+            }
+            canvas.drawLine(0f, lineY, w, lineY, paint)
             previewView.background = android.graphics.drawable.BitmapDrawable(resources, bitmap)
         }
     }

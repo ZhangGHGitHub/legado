@@ -1701,7 +1701,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onColorSelected(dialogId: Int, color: Int) {
         // 转发下划线颜色选择到 ThoughtUnderlineStyleDialog
         if (dialogId == io.legado.app.ui.book.thought.ThoughtUnderlineStyleDialog.COLOR_DIALOG_ID) {
-            findThoughtUnderlineDialog()?.onColorSelected(dialogId, color)
+            io.legado.app.ui.book.thought.ThoughtUnderlineStyleDialog.pendingDialog
+                ?.onColorSelected(dialogId, color)
             return
         }
         ReadBookConfig.durConfig.run {
@@ -1743,15 +1744,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
     }
-    }
-
-    /** 递归查找 ThoughtUnderlineStyleDialog（在 BookThoughtDialog 的子FragmentManager中） */
-    private fun findThoughtUnderlineDialog(): io.legado.app.ui.book.thought.ThoughtUnderlineStyleDialog? {
-        for (fragment in supportFragmentManager.fragments) {
-            val child = fragment.childFragmentManager.findFragmentByTag("underlineStyleDialog")
-            if (child is io.legado.app.ui.book.thought.ThoughtUnderlineStyleDialog) return child
-        }
-        return null
     }
 
     /**

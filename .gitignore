@@ -26,6 +26,7 @@ THOUGHT_SHARE_FEATURE_PLAN.md
 
 .vscode
 .claude/
+CLAUDE.md
 
 # Java 堆内存转储文件（JVM崩溃时自动生成，体积巨大）
 *.hprof

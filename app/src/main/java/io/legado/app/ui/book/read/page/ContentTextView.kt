@@ -757,6 +757,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 return null
             }
             ReadBook.book?.let { book ->
+                val lastStyle = io.legado.app.ui.book.thought.ThoughtUnderlineStyleDialog.lastUsedStyle()
                 return BookThought(
                     bookName = book.name,
                     bookAuthor = book.author,
@@ -765,7 +766,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             page.getPosByLineColumn(selectStart.lineIndex, selectStart.columnIndex),
                     chapterName = chapter.title,
                     selectedText = selectedText,
-                    textHash = selectedText.hashCode().toString()
+                    textHash = selectedText.hashCode().toString(),
+                    underlineStyle = lastStyle.style,
+                    underlineWeight = lastStyle.weight,
+                    underlineColor = lastStyle.color
                 )
             }
         }

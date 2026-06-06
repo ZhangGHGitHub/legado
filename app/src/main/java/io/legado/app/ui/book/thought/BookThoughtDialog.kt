@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.thought
 
+import android.content.DialogInterface
 import android.graphics.PorterDuff
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -15,8 +17,10 @@ import io.legado.app.data.entities.BookThought
 import io.legado.app.databinding.DialogBookThoughtBinding
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -52,7 +56,15 @@ class BookThoughtDialog() : BaseDialogFragment(R.layout.dialog_book_thought, tru
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as ReadBookActivity).bottomDialog++
+        binding.root.applyNavigationBarPadding()
         val bg = requireContext().bottomBackground
+        (binding.root as? com.google.android.material.card.MaterialCardView)
+            ?.setCardBackgroundColor(bg)
+        binding.root.background = GradientDrawable().apply {
+            cornerRadius = 16f.dpToPx()
+            setColor(bg)
+        }
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         binding.run {
@@ -137,5 +149,10 @@ class BookThoughtDialog() : BaseDialogFragment(R.layout.dialog_book_thought, tru
                 }.show(childFragmentManager, "underlineStyleDialog")
             }
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (activity as? ReadBookActivity)?.bottomDialog--
     }
 }

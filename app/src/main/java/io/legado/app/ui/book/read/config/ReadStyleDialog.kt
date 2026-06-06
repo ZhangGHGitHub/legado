@@ -72,6 +72,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     private fun initView() = binding.run {
         val bg = requireContext().bottomBackground
         root.setCardBackgroundColor(bg)
+        root.background = null  // 清除 BaseDialogFragment 设置的 filletBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         tvPageAnim.setTextColor(textColor)

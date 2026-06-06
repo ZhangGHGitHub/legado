@@ -57,6 +57,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         binding.root.applyNavigationBarPadding()
         val bg = requireContext().bottomBackground
         binding.root.setCardBackgroundColor(bg)
+        binding.root.background = null  // 清除 BaseDialogFragment 设置的 filletBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         binding.run {

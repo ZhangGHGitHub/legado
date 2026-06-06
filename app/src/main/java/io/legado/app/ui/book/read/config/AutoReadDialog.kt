@@ -59,6 +59,7 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         root.applyNavigationBarPadding()
         val bg = requireContext().bottomBackground
         root.setCardBackgroundColor(bg)
+        root.background = null  // 清除 BaseDialogFragment 设置的 filletBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         tvReadSpeedTitle.setTextColor(textColor)
